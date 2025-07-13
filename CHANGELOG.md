@@ -9,6 +9,7 @@
 - Updated site with direct download links for all platforms and CLI install instructions.
 - Added SEO assets: `robots.txt`, `sitemap.xml`, JSON-LD structured data, comprehensive meta tags.
 - Made site fully mobile-responsive with sticky nav and touch-friendly layout.
+- Bundled aria2c inside release binaries — zero external dependencies, just download and run.
 
 ## 0.0.5 BHOODEVI - 2026-03-13
 

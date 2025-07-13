@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/shreyam1008/gobarrygo/internal/bundled"
 	"github.com/shreyam1008/gobarrygo/internal/config"
 	"github.com/shreyam1008/gobarrygo/internal/contracts"
 	"github.com/shreyam1008/gobarrygo/internal/system"
@@ -374,11 +375,17 @@ func resolveBinary(explicit string) (string, error) {
 		}
 	}
 
-	path, err := exec.LookPath("aria2c")
-	if err != nil {
-		return "", err
+	// Try system PATH first.
+	if path, err := exec.LookPath("aria2c"); err == nil {
+		return path, nil
 	}
-	return path, nil
+
+	// Fall back to bundled aria2c extracted to user cache.
+	if bundledPath, err := bundled.Aria2cPath(); err == nil && bundledPath != "" {
+		return bundledPath, nil
+	}
+
+	return "", fmt.Errorf("aria2c not found in PATH or bundle")
 }
 
 func reservePort() (int, error) {

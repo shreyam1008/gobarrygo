@@ -7,6 +7,10 @@ frontend/.vite/
 .DS_Store
 *.log
 
+# Bundled binaries (CI places platform-specific aria2c here before build)
+internal/bundled/bin/*
+!internal/bundled/bin/.gitkeep
+
 # Site
 site/dist/
 site/node_modules/
