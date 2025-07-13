@@ -34,9 +34,16 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
-      - uses: oven-sh/setup-bun@v2
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Setup NSIS
+        if: matrix.target == 'windows'
+        uses: joncloud/setup-nsis@v2
+        with:
+          nsis-version: 3.08
 
       - name: Install Linux GUI dependencies
         if: matrix.target == 'linux'
@@ -48,10 +55,6 @@ jobs:
             libsoup-3.0-dev \
             pkg-config
 
-      - name: Install NSIS
-        if: matrix.target == 'windows'
-        run: choco install nsis -y
-        shell: powershell
 
       - name: Cache Wails CLI
         id: cache-wails
@@ -100,13 +103,14 @@ jobs:
           # Use flat structure for AppImage to avoid path nesting bugs
           mkdir -p build/appimage_staging
           cp bin/gobarrygo build/appimage_staging/
-          cp build/appicon.png build/appimage_staging/
+          # Icon name MUST match the desktop file 'Icon' field (gobarrygo)
+          cp build/appicon.png build/appimage_staging/gobarrygo.png
           cp build/linux/gobarrygo.desktop build/appimage_staging/
           # CRITICAL: Copy binary to root to prevent deep nesting in AppDir/usr/bin
           cp bin/gobarrygo .
           wails3 generate appimage \
             -binary gobarrygo \
-            -icon build/appimage_staging/appicon.png \
+            -icon build/appimage_staging/gobarrygo.png \
             -desktopfile build/appimage_staging/gobarrygo.desktop \
             -outputdir "$GITHUB_WORKSPACE/bin" \
             -builddir "$GITHUB_WORKSPACE/build/linux/appimage_work"
