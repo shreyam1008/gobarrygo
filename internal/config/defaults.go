@@ -25,7 +25,7 @@ func DefaultPreferences() contracts.Preferences {
 		ContinueDownloads:       true,
 		AlwaysResume:            true,
 		AutoRename:              true,
-		UserAgent:               "GoBarryGo/0.0.5 (BHOODEVI)",
+		UserAgent:               "GoBarryGo/0.0.6 (CHITRA)",
 		NotifyOnCompletion:      true,
 		NotifyOnError:           true,
 	}

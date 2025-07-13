@@ -10,11 +10,11 @@
         <key>CFBundleIdentifier</key>
             <string>io.shreyam.gobarrygo</string>
         <key>CFBundleVersion</key>
-            <string>0.0.5</string>
+            <string>0.0.6</string>
         <key>CFBundleGetInfoString</key>
-            <string>Version 0.0.5 BHOODEVI</string>
+            <string>Version 0.0.6 CHITRA</string>
         <key>CFBundleShortVersionString</key>
-            <string>0.0.5</string>
+            <string>0.0.6</string>
         <key>CFBundleIconFile</key>
             <string>icons</string>
         <key>LSMinimumSystemVersion</key>

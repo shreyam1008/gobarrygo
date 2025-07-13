@@ -80,5 +80,8 @@ jobs:
         run: go test ./internal/... ./tests/...
 
       - name: Linux smoke build
-        run: go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
+        run: |
+          test -f frontend/dist/index.html || (echo 'ERROR: frontend build missing index.html' && exit 1)
+          go clean -cache
+          go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
 

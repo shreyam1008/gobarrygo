@@ -2,8 +2,8 @@
 
 ## Versioning
 
-- Current line: `0.0.5`
-- Current codename: `BHOODEVI`
+- Current line: `0.0.6`
+- Current codename: `CHITRA`
 
 The version string is kept in:
 
@@ -30,7 +30,7 @@ The version string is kept in:
 3. Tag the release with a semantic version, for example:
 
 ```bash
-git tag v0.0.5
+git tag v0.0.6
 git push origin main --tags
 ```
 
