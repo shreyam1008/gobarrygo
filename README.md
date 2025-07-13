@@ -1,6 +1,6 @@
 # GoBarryGo
 
-GoBarryGo is a lightweight desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.1` is codename `AARATI`.
+GoBarryGo is a lightweight desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.5` is codename `BHOODEVI`.
 
 ## What It Does
 
@@ -17,7 +17,7 @@ GoBarryGo is a lightweight desktop download manager for `aria2c`, built from scr
 - The frontend uses Bun + React 19.2 + TypeScript 5.9 with generated Wails bindings.
 - Release artifacts are published through GitHub Releases. Pushes to `main` produce build artifacts for inspection.
 
-## Features In 0.0.1 AARATI
+## Features In 0.0.5 BHOODEVI
 
 - Add downloads by URL with optional output name, directory override, headers, and User-Agent override.
 - Pause, resume, retry, remove, open file, and reveal folder actions.
@@ -49,7 +49,19 @@ Linux build prerequisites:
 - `libsoup-3.0-dev`
 - `pkg-config`
 
-## Quick Start
+## Quick Install
+
+Download a pre-built binary on Linux, macOS, or Windows (Git Bash):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/shreyam1008/gobarrygo/main/install.sh | bash
+```
+
+No Go toolchain, Node.js, or complex dependencies required.
+
+**Website**: [shreyam1008.github.io/gobarrygo](https://shreyam1008.github.io/gobarrygo/)
+
+## Development Setup
 
 ```bash
 go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.74

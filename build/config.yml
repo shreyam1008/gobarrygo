@@ -1,13 +1,13 @@
 version: '3'
 
 info:
-  companyName: "Shreya M"
+  companyName: "Shreyam1008"
   productName: "GoBarryGo"
   productIdentifier: "io.shreyam.gobarrygo"
   description: "A lightweight desktop download manager powered by aria2c."
-  copyright: "(c) 2026, Shreya M"
-  comments: "Version 0.0.1 AARATI"
-  version: "0.0.1"
+  copyright: "(c) 2026, Shreyam1008"
+  comments: "Version 0.0.5 BHOODEVI"
+  version: "0.0.5"
 
 dev_mode:
   root_path: .
@@ -35,5 +35,5 @@ dev_mode:
       type: primary
 
 other:
-  - name: AARATI
+  - name: BHOODEVI
 
