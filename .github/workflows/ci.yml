@@ -44,6 +44,7 @@ jobs:
         run: |
           go run ./tools/generate_appicon.go
           wails3 generate icons -input build/appicon.png -macfilename build/darwin/icons.icns -windowsfilename build/windows/icon.ico
+          mkdir -p frontend/dist
           wails3 generate bindings -clean=true -ts
 
       - name: Install frontend dependencies

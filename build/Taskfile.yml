@@ -68,6 +68,7 @@ tasks:
     deps:
       - task: go:mod:tidy
     cmds:
+      - mkdir -p frontend/dist
       - wails3 generate bindings -clean=true -ts
 
   generate:icons:
