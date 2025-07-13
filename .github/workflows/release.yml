@@ -78,9 +78,12 @@ jobs:
       - name: Bundle aria2c (Linux)
         if: matrix.target == 'linux'
         run: |
-          sudo apt-get install -y aria2
-          cp /usr/bin/aria2c internal/bundled/bin/aria2c
+          curl -fsSL -o /tmp/aria2-static.zip \
+            "https://github.com/abcfy2/aria2-static-build/releases/download/$ARIA2_VERSION/aria2-x86_64-linux-musl_static.zip"
+          unzip -o /tmp/aria2-static.zip -d /tmp/aria2-static
+          cp /tmp/aria2-static/aria2c internal/bundled/bin/aria2c
           chmod 755 internal/bundled/bin/aria2c
+          ls -lh internal/bundled/bin/aria2c
           file internal/bundled/bin/aria2c
         shell: bash
 
