@@ -89,6 +89,7 @@ jobs:
           bun --cwd frontend run build
           go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
           wails3 generate .desktop -name "gobarrygo" -exec "gobarrygo" -icon "gobarrygo" -outputfile build/linux/gobarrygo.desktop -categories "Network;Utility;"
+          mkdir -p build/linux/appimage
           wails3 generate appimage -binary bin/gobarrygo -icon build/appicon.png -desktopfile build/linux/gobarrygo.desktop -outputdir bin -builddir build/linux/appimage
           wails3 tool package -name "gobarrygo" -format deb -config build/linux/nfpm/nfpm.yaml -out bin
           wails3 tool package -name "gobarrygo" -format rpm -config build/linux/nfpm/nfpm.yaml -out bin
