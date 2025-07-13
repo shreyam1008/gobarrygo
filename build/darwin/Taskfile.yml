@@ -1,0 +1,42 @@
+version: '3'
+
+includes:
+  common: ../Taskfile.yml
+
+tasks:
+  build:
+    summary: Build the macOS binary
+    deps:
+      - task: common:go:mod:tidy
+      - task: common:build:frontend
+        vars:
+          DEV: '{{.DEV}}'
+      - task: common:generate:icons
+    cmds:
+      - go build {{if eq .DEV "true"}}-buildvcs=false{{else}}-tags production -trimpath -buildvcs=false -ldflags="-w -s"{{end}} -o {{.BIN_DIR}}/{{.APP_NAME}}
+    env:
+      GOOS: darwin
+      GOARCH: '{{.ARCH | default ARCH}}'
+      CGO_ENABLED: 1
+      CGO_CFLAGS: "-mmacosx-version-min=11.0"
+      CGO_LDFLAGS: "-mmacosx-version-min=11.0"
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+
+  package:
+    summary: Build the macOS app bundle
+    deps:
+      - task: build
+    cmds:
+      - mkdir -p {{.BIN_DIR}}/{{.APP_NAME}}.app/Contents/MacOS
+      - mkdir -p {{.BIN_DIR}}/{{.APP_NAME}}.app/Contents/Resources
+      - cp build/darwin/icons.icns {{.BIN_DIR}}/{{.APP_NAME}}.app/Contents/Resources/icons.icns
+      - cp build/darwin/Info.plist {{.BIN_DIR}}/{{.APP_NAME}}.app/Contents/Info.plist
+      - cp {{.BIN_DIR}}/{{.APP_NAME}} {{.BIN_DIR}}/{{.APP_NAME}}.app/Contents/MacOS/{{.APP_NAME}}
+      - cmd: codesign --force --deep --sign - {{.BIN_DIR}}/{{.APP_NAME}}.app
+        platforms: [darwin]
+
+  run:
+    summary: Run the macOS binary
+    cmds:
+      - '{{.BIN_DIR}}/{{.APP_NAME}}'
+

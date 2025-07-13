@@ -1,0 +1,9 @@
+bin/
+dist/
+coverage/
+frontend/dist/
+frontend/node_modules/
+frontend/.vite/
+.DS_Store
+*.log
+

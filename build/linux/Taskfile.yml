@@ -1,0 +1,63 @@
+version: '3'
+
+includes:
+  common: ../Taskfile.yml
+
+tasks:
+  build:
+    summary: Build the Linux binary
+    deps:
+      - task: common:go:mod:tidy
+      - task: common:build:frontend
+        vars:
+          DEV: '{{.DEV}}'
+      - task: common:generate:icons
+      - task: generate:dotdesktop
+    cmds:
+      - go build {{if eq .DEV "true"}}-buildvcs=false{{else}}-tags production -trimpath -buildvcs=false -ldflags="-w -s"{{end}} -o {{.OUTPUT | default (printf "%s/%s" .BIN_DIR .APP_NAME)}}
+    env:
+      GOOS: linux
+      GOARCH: '{{.ARCH | default ARCH}}'
+      CGO_ENABLED: 1
+
+  package:
+    summary: Build Linux packages
+    deps:
+      - task: build
+    cmds:
+      - task: create:appimage
+      - task: create:deb
+      - task: create:rpm
+
+  create:appimage:
+    summary: Build the AppImage
+    deps:
+      - task: generate:dotdesktop
+    cmds:
+      - mkdir -p {{.BIN_DIR}}
+      - wails3 generate appimage -binary {{.ROOT_DIR}}/{{.BIN_DIR}}/{{.APP_NAME}} -icon {{.ROOT_DIR}}/build/appicon.png -desktopfile {{.ROOT_DIR}}/build/linux/{{.APP_NAME}}.desktop -outputdir {{.ROOT_DIR}}/{{.BIN_DIR}} -builddir {{.ROOT_DIR}}/build/linux/appimage
+
+  create:deb:
+    summary: Build the Debian package
+    deps:
+      - task: generate:dotdesktop
+    cmds:
+      - wails3 tool package -name "{{.APP_NAME}}" -format deb -config {{.ROOT_DIR}}/build/linux/nfpm/nfpm.yaml -out {{.ROOT_DIR}}/{{.BIN_DIR}}
+
+  create:rpm:
+    summary: Build the RPM package
+    deps:
+      - task: generate:dotdesktop
+    cmds:
+      - wails3 tool package -name "{{.APP_NAME}}" -format rpm -config {{.ROOT_DIR}}/build/linux/nfpm/nfpm.yaml -out {{.ROOT_DIR}}/{{.BIN_DIR}}
+
+  generate:dotdesktop:
+    summary: Generate the Linux desktop entry
+    cmds:
+      - wails3 generate .desktop -name "{{.APP_NAME}}" -exec "{{.APP_NAME}}" -icon "{{.APP_NAME}}" -outputfile "{{.ROOT_DIR}}/build/linux/{{.APP_NAME}}.desktop" -categories "Network;Utility;"
+
+  run:
+    summary: Run the Linux binary
+    cmds:
+      - '{{.BIN_DIR}}/{{.APP_NAME}}'
+

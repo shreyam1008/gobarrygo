@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "0.0.1"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "0.0.1",
+			"CompanyName": "Shreya M",
+			"FileDescription": "A lightweight desktop download manager powered by aria2c.",
+			"LegalCopyright": "(c) 2026, Shreya M",
+			"ProductName": "GoBarryGo",
+			"Comments": "Version 0.0.1 AARATI"
+		}
+	}
+}

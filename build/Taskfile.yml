@@ -1,0 +1,89 @@
+version: '3'
+
+tasks:
+  go:mod:tidy:
+    summary: Sync Go module metadata
+    cmds:
+      - go mod tidy
+
+  install:frontend:deps:
+    summary: Install frontend dependencies with Bun
+    dir: frontend
+    sources:
+      - package.json
+      - bun.lock
+    generates:
+      - node_modules
+    preconditions:
+      - sh: bun --version
+        msg: "Bun is required to build the frontend."
+    cmds:
+      - TMPDIR=/tmp bun install
+
+  build:frontend:
+    summary: Build the frontend bundle
+    dir: frontend
+    deps:
+      - task: install:frontend:deps
+      - task: generate:bindings
+    cmds:
+      - TMPDIR=/tmp bun run {{if eq .DEV "true"}}build:dev{{else}}build{{end}}
+
+  dev:frontend:
+    summary: Run the frontend dev server
+    dir: frontend
+    deps:
+      - task: install:frontend:deps
+    cmds:
+      - TMPDIR=/tmp bun run dev -- --port {{.VITE_PORT}}
+
+  check:frontend:
+    summary: Run frontend type checks
+    dir: frontend
+    deps:
+      - task: install:frontend:deps
+    cmds:
+      - TMPDIR=/tmp bun run typecheck
+
+  test:frontend:
+    summary: Run frontend unit tests
+    dir: frontend
+    deps:
+      - task: install:frontend:deps
+    cmds:
+      - TMPDIR=/tmp bun run test
+
+  check:go:
+    summary: Verify core Go packages compile
+    cmds:
+      - go test ./internal/app ./internal/aria2 ./internal/config ./internal/contracts ./internal/system ./internal/version
+
+  test:go:
+    summary: Run Go tests
+    cmds:
+      - go test ./internal/app ./internal/aria2 ./internal/config ./internal/contracts ./internal/system ./internal/version ./tests/...
+
+  generate:bindings:
+    summary: Generate Wails bindings
+    deps:
+      - task: go:mod:tidy
+    cmds:
+      - wails3 generate bindings -clean=true -ts
+
+  generate:icons:
+    summary: Generate Windows and macOS icons from build/appicon.png
+    dir: build
+    sources:
+      - appicon.png
+    generates:
+      - darwin/icons.icns
+      - windows/icon.ico
+    cmds:
+      - wails3 generate icons -input appicon.png -macfilename darwin/icons.icns -windowsfilename windows/icon.ico
+
+  update:build-assets:
+    summary: Refresh platform metadata files from build/config.yml
+    dir: build
+    cmds:
+      - wails3 update build-assets -name "{{.APP_NAME}}" -binaryname "{{.APP_NAME}}" -config config.yml -dir .
+
