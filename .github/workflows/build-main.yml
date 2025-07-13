@@ -101,8 +101,10 @@ jobs:
           cp bin/gobarrygo build/appimage_staging/
           cp build/appicon.png build/appimage_staging/
           cp build/linux/gobarrygo.desktop build/appimage_staging/
+          # CRITICAL: Copy binary to root to prevent deep nesting in AppDir/usr/bin
+          cp bin/gobarrygo .
           wails3 generate appimage \
-            -binary build/appimage_staging/gobarrygo \
+            -binary gobarrygo \
             -icon build/appimage_staging/appicon.png \
             -desktopfile build/appimage_staging/gobarrygo.desktop \
             -outputdir "$GITHUB_WORKSPACE/bin" \
@@ -124,7 +126,7 @@ jobs:
           go build -tags production -trimpath -buildvcs=false -ldflags='-w -s -H windowsgui' -o bin/gobarrygo.exe .
           Remove-Item wails_windows_amd64.syso
           wails3 generate webview2bootstrapper -dir "$PWD/build/windows/nsis"
-          & "C:\Program Files (x86)\NSIS\makensis.exe" -DARG_WAILS_AMD64_BINARY="$PWD\bin\gobarrygo.exe" "$PWD\build\windows\nsis\project.nsi"
+          makensis -DARG_WAILS_AMD64_BINARY="$PWD\bin\gobarrygo.exe" "$PWD\build\windows\nsis\project.nsi"
         shell: powershell
 
       - name: Build macOS artifacts
