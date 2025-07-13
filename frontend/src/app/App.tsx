@@ -45,7 +45,7 @@ export function App() {
     <div className="shell">
       <header className="hero">
         <div className="hero__copy">
-          <span className="hero__eyebrow">GoBarryGo 0.0.1 AARATI</span>
+          <span className="hero__eyebrow">GoBarryGo {state.snapshot.version.number} {state.snapshot.version.codename}</span>
           <h1>aria2 speed with a desktop control surface that stays lean.</h1>
           <p>
             Tune split count, connections per host, recovery behavior, and output location

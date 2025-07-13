@@ -6,7 +6,7 @@
 name: "gobarrygo"
 arch: ${GOARCH}
 platform: "linux"
-version: "0.0.1"
+version: "0.0.5"
 section: "default"
 priority: "extra"
 maintainer: "Shreya M <noreply@users.noreply.github.com>"
@@ -36,8 +36,8 @@ overrides:
     depends:
       - gtk3
       - webkit2gtk4.1
-  
-  # Arch Linux packages (WebKit 4.1)  
+
+  # Arch Linux packages (WebKit 4.1)
   archlinux:
     depends:
       - gtk3
