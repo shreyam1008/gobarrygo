@@ -77,7 +77,7 @@ jobs:
           bun run build
 
       - name: Go tests
-        run: go test ./internal/app ./internal/aria2 ./internal/config ./internal/contracts ./internal/system ./internal/version ./tests/...
+        run: go test ./...
 
       - name: Linux smoke build
         run: go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
