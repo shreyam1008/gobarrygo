@@ -1,0 +1,1 @@
+{ "name": "gobarrygo-site", "version": "0.1.0", "scripts": { "dev": "astro dev", "build": "astro build" }, "dependencies": { "astro": "^5.0.0" } }
