@@ -8,7 +8,7 @@
     !define INFO_PROJECTNAME "gobarrygo"
 !endif
 !ifndef INFO_COMPANYNAME
-    !define INFO_COMPANYNAME "Shreya M"
+    !define INFO_COMPANYNAME "Shreyam1008"
 !endif
 !ifndef INFO_PRODUCTNAME
     !define INFO_PRODUCTNAME "GoBarryGo"
