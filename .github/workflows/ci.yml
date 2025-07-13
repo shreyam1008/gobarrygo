@@ -57,7 +57,15 @@ jobs:
           touch frontend/dist/.gitkeep
           wails3 generate bindings -clean=true -ts
 
+      - name: Cache frontend node_modules
+        id: cache-frontend-modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/bun.lockb', 'frontend/package.json') }}
+
       - name: Install frontend dependencies
+        if: steps.cache-frontend-modules.outputs.cache-hit != 'true'
         working-directory: frontend
         run: bun install --frozen-lockfile
 
