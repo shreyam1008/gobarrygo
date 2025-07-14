@@ -1,6 +1,7 @@
 package aria2
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
@@ -277,6 +278,12 @@ func (m *Manager) bootstrapLocked(ctx context.Context, prefs contracts.Preferenc
 	if err != nil {
 		return contracts.Health{}, err
 	}
+	// Ensure session file exists, otherwise aria2c fails with --input-file
+	if _, err := os.Stat(sessionFile); os.IsNotExist(err) {
+		if err := os.WriteFile(sessionFile, []byte{}, 0o644); err != nil {
+			return contracts.Health{}, fmt.Errorf("create session file: %w", err)
+		}
+	}
 
 	procCtx, cancel := context.WithCancel(context.Background())
 	args := []string{
@@ -301,9 +308,11 @@ func (m *Manager) bootstrapLocked(ctx context.Context, prefs contracts.Preferenc
 		"--save-session-interval=30",
 	}
 
+	// Capture stderr for debugging startup failures
+	var stderr bytes.Buffer
 	cmd := exec.CommandContext(procCtx, binaryPath, args...)
 	cmd.Stdout = io.Discard
-	cmd.Stderr = io.Discard
+	cmd.Stderr = &stderr
 
 	if err := cmd.Start(); err != nil {
 		cancel()
@@ -314,7 +323,8 @@ func (m *Manager) bootstrapLocked(ctx context.Context, prefs contracts.Preferenc
 	if err := waitForRPC(ctx, client); err != nil {
 		cancel()
 		_ = cmd.Process.Kill()
-		return contracts.Health{}, err
+		// Include stderr in the error message
+		return contracts.Health{}, fmt.Errorf("%w: %s", err, stderr.String())
 	}
 
 	m.cmd = cmd

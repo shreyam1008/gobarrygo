@@ -6,8 +6,8 @@ info:
   productIdentifier: "io.shreyam.gobarrygo"
   description: "A lightweight desktop download manager powered by aria2c."
   copyright: "(c) 2026, Shreyam1008"
-  comments: "Version 0.0.6 CHITRA"
-  version: "0.0.6"
+  comments: "Version 0.0.7 CHITRA"
+  version: "0.0.7"
 
 dev_mode:
   root_path: .

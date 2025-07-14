@@ -16,6 +16,9 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed build/appicon.png
+var icon []byte
+
 func init() {
 	application.RegisterEvent[contracts.AppSnapshot](contracts.EventSnapshot)
 	application.RegisterEvent[contracts.Notification](contracts.EventNotification)
@@ -31,6 +34,7 @@ func main() {
 	desktop := application.New(application.Options{
 		Name:        "GoBarryGo",
 		Description: "A lightweight aria2c desktop controller.",
+		Icon:        icon,
 		Services: []application.Service{
 			application.NewService(apiService),
 			application.NewService(notificationService),

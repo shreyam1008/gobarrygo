@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.7 CHITRA - 2026-03-14
+
+- **Fixed:** Bundled aria2c now correctly initializes its session file on first run, fixing the "rpc did not become ready" error for new users.
+- **Fixed:** Standalone Linux binary (`gobarrygo-linux-amd64`) now has a proper window icon (embedded in the binary).
+- **Improved:** Aria2c startup errors are now captured and displayed in the error message for easier debugging.
+- **Updated:** Site download links point to v0.0.7.
+
 ## 0.0.6 CHITRA - 2026-03-13
 
 - Fixed critical bug: frontend assets not embedded in production binary (Go build cache stale after `wails3 generate bindings`).
