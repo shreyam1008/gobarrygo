@@ -38,12 +38,6 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
-      - name: Setup NSIS
-        if: matrix.target == 'windows'
-        uses: joncloud/setup-nsis@v2
-        with:
-          nsis-version: 3.08
-
       - name: Install Linux GUI dependencies
         if: matrix.target == 'linux'
         run: |
@@ -54,9 +48,10 @@ jobs:
             libsoup-3.0-dev \
             pkg-config
 
-      - name: Install Linux GUI dependencies
-        if: matrix.target == 'linux'
-        run: |
+      - name: Install NSIS
+        if: matrix.target == 'windows'
+        run: choco install nsis -y
+        shell: powershell
 
       - name: Cache Wails CLI
         id: cache-wails
@@ -133,6 +128,10 @@ jobs:
           go build -tags production -trimpath -buildvcs=false -ldflags='-w -s -H windowsgui' -o bin/gobarrygo.exe .
           Remove-Item wails_windows_amd64.syso
           wails3 generate webview2bootstrapper -dir "$PWD/build/windows/nsis"
+          # Ensure makensis is in path (installed via choco but often needs manual path addition)
+          if (!(Get-Command makensis.exe -ErrorAction SilentlyContinue)) {
+            $env:PATH += ";C:\Program Files (x86)\NSIS"
+          }
           makensis -DARG_WAILS_AMD64_BINARY="$PWD\bin\gobarrygo.exe" "$PWD\build\windows\nsis\project.nsi"
         shell: powershell
 
