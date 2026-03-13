@@ -79,7 +79,15 @@ jobs:
           wails3 generate bindings -clean=true -ts
         shell: bash
 
+      - name: Cache frontend node_modules
+        id: cache-frontend-modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/bun.lockb', 'frontend/package.json') }}
+
       - name: Install frontend dependencies
+        if: steps.cache-frontend-modules.outputs.cache-hit != 'true'
         working-directory: frontend
         run: bun install --frozen-lockfile
 
@@ -88,10 +96,22 @@ jobs:
         run: |
           bun --cwd frontend run build
           go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
-          wails3 generate .desktop -name "gobarrygo" -exec "gobarrygo" -icon "gobarrygo" -outputfile "$GITHUB_WORKSPACE/build/linux/gobarrygo.desktop" -categories "Network;Utility;"
-          wails3 generate appimage -binary bin/gobarrygo -icon "$GITHUB_WORKSPACE/build/appicon.png" -desktopfile "$GITHUB_WORKSPACE/build/linux/gobarrygo.desktop" -outputdir "$GITHUB_WORKSPACE/bin" -builddir "$GITHUB_WORKSPACE/build/linux/appimage"
-          wails3 tool package -name "gobarrygo" -format deb -config "$GITHUB_WORKSPACE/build/linux/nfpm/nfpm.yaml" -out "$GITHUB_WORKSPACE/bin"
-          wails3 tool package -name "gobarrygo" -format rpm -config "$GITHUB_WORKSPACE/build/linux/nfpm/nfpm.yaml" -out "$GITHUB_WORKSPACE/bin"
+          wails3 generate .desktop -name "gobarrygo" -exec "gobarrygo" -icon "gobarrygo" -outputfile build/linux/gobarrygo.desktop -categories "Network;Utility;"
+          # Use flat structure for AppImage to avoid path nesting bugs
+          mkdir -p build/appimage_staging
+          cp bin/gobarrygo build/appimage_staging/
+          cp build/appicon.png build/appimage_staging/
+          cp build/linux/gobarrygo.desktop build/appimage_staging/
+          wails3 generate appimage \
+            -binary build/appimage_staging/gobarrygo \
+            -icon build/appimage_staging/appicon.png \
+            -desktopfile build/appimage_staging/gobarrygo.desktop \
+            -outputdir "$GITHUB_WORKSPACE/bin" \
+            -builddir "$GITHUB_WORKSPACE/build/linux/appimage_work"
+          # Standardize naming for install.sh
+          mv bin/gobarrygo-x86_64.AppImage bin/gobarrygo-amd64.AppImage
+          wails3 tool package -name "gobarrygo" -format deb -config build/linux/nfpm/nfpm.yaml -out bin
+          wails3 tool package -name "gobarrygo" -format rpm -config build/linux/nfpm/nfpm.yaml -out bin
         shell: bash
 
       - name: Build Windows release assets

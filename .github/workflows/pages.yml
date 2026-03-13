@@ -37,13 +37,23 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
+      - name: Cache site node_modules
+        id: cache-site-modules
+        uses: actions/cache@v4
+        with:
+          path: site/node_modules
+          key: ${{ runner.os }}-site-${{ hashFiles('site/bun.lock', 'site/package.json') }}
+
       - name: Install dependencies
+        if: steps.cache-site-modules.outputs.cache-hit != 'true'
         working-directory: site
         run: bun install
         
       - name: Build with Astro
         working-directory: site
-        run: bun run build
+        run: |
+          bun run build
+          touch dist/.nojekyll
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
