@@ -98,7 +98,7 @@ jobs:
       - name: Build Linux release assets
         if: matrix.target == 'linux'
         run: |
-          bun --cwd frontend run build
+          (cd frontend && bun run build)
           echo '--- frontend/dist contents ---' && ls -la frontend/dist/ && echo '---'
           test -f frontend/dist/index.html || (echo 'ERROR: frontend build missing index.html' && exit 1)
           go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
@@ -138,7 +138,7 @@ jobs:
       - name: Build Windows release assets
         if: matrix.target == 'windows'
         run: |
-          bun --cwd frontend run build
+          Push-Location frontend; bun run build; if ($LASTEXITCODE -ne 0) { exit 1 }; Pop-Location
           Write-Host '--- frontend/dist contents ---'
           Get-ChildItem frontend/dist -Recurse
           Write-Host '---'
@@ -156,7 +156,7 @@ jobs:
       - name: Build macOS release assets
         if: matrix.target == 'macos'
         run: |
-          bun --cwd frontend run build
+          (cd frontend && bun run build)
           echo '--- frontend/dist contents ---' && ls -la frontend/dist/ && echo '---'
           test -f frontend/dist/index.html || (echo 'ERROR: frontend build missing index.html' && exit 1)
           go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
