@@ -42,7 +42,7 @@ git push origin main --tags
 
 ## Main Branch Builds
 
-Every push to `main` triggers the `build-main.yml` workflow. It uploads unsigned build artifacts so packaging regressions are visible before a release tag is cut.
+Every push to `main` triggers the `ci.yml` validation workflow which runs Go tests, frontend checks, and a Linux smoke build. Full multi-platform artifact builds only run when a release tag is pushed.
 
 ## Signing
 

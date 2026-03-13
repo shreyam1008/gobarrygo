@@ -92,11 +92,11 @@ task darwin:package
 
 ## Latest Builds
 
-You can download the latest development builds (artifacts) for every push to `main`:
+Release builds are published automatically when a version tag is pushed:
 
-1.  Go to the [Actions](https://github.com/shreyam1008/gobarrygo/actions) tab.
-2.  Select the latest successful **build-main** workflow run.
-3.  Scroll down to **Artifacts** and download the package for your platform.
+1.  Go to the [Releases](https://github.com/shreyam1008/gobarrygo/releases) page.
+2.  Download the package for your platform from the latest release.
+3.  Every push to `main` runs validation via the **ci** workflow in [Actions](https://github.com/shreyam1008/gobarrygo/actions).
 
 ## Repository Guide
 
