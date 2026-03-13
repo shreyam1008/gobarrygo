@@ -7,3 +7,7 @@ frontend/.vite/
 .DS_Store
 *.log
 
+# Site
+site/dist/
+site/node_modules/
+site/.astro/
