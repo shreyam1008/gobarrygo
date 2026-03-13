@@ -1,6 +1,6 @@
 ---
 const repoUrl = "https://github.com/shreyam1008/gobarrygo";
-const dlBase = repoUrl + "/releases/download/v0.0.5";
+const dlBase = repoUrl + "/releases/download/v0.0.6";
 const latestDl = repoUrl + "/releases/latest/download";
 const authorUrl = "https://shreyam1008.com.np";
 const siteTitle = "GoBarryGo - Ultra-light Aria2c Desktop Controller";
@@ -50,7 +50,7 @@ const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
       "description": siteDescription,
       "url": siteUrl,
       "downloadUrl": repoUrl + "/releases/latest",
-      "softwareVersion": "0.0.5",
+      "softwareVersion": "0.0.6",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -375,7 +375,7 @@ const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
     <div class="hero">
       <div class="hero-glow"></div>
       <div class="container">
-        <span class="badge">v0.0.5 BHOODEVI &mdash; Free &amp; Open Source</span>
+        <span class="badge">v0.0.6 CHITRA &mdash; Free &amp; Open Source</span>
         <h1>Download manager that<br>stays out of your way</h1>
         <p class="hero-sub">
           GoBarryGo wraps aria2c in a native desktop shell built with Go and React&nbsp;19.
@@ -408,7 +408,7 @@ const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
       <section id="download">
         <span class="section-label">Download</span>
         <h2>Grab the latest release</h2>
-        <p class="section-desc">Direct download links for v0.0.5. Pick the package that fits your system.</p>
+        <p class="section-desc">Direct download links for v0.0.6. Pick the package that fits your system.</p>
 
         <div class="dl-grid">
           <div class="dl-card">
@@ -418,6 +418,7 @@ const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
               <a href={dlBase + "/gobarrygo.deb"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>.deb</code> (4 MB)</a>
               <a href={dlBase + "/gobarrygo.rpm"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>.rpm</code> (4 MB)</a>
               <a href={dlBase + "/gobarrygo-amd64.AppImage"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>AppImage</code> (72 MB)</a>
+              <a href={dlBase + "/gobarrygo-linux-amd64"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>Standalone binary</code> (~10 MB)</a>
             </div>
           </div>
           <div class="dl-card">
@@ -461,6 +462,14 @@ const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
           <div class="code-block">
             <span class="prompt">$</span> <span class="cmd">curl -fsSLO {dlBase}/gobarrygo.rpm</span><br>
             <span class="prompt">$</span> <span class="cmd">sudo rpm -i gobarrygo.rpm</span>
+          </div>
+
+          <h3 style="margin-top: 1.25rem;">Standalone binary (any distro)</h3>
+          <div class="code-block">
+            <span class="comment"># Single executable — just download and run</span><br>
+            <span class="prompt">$</span> <span class="cmd">curl -fsSLO {dlBase}/gobarrygo-linux-amd64</span><br>
+            <span class="prompt">$</span> <span class="cmd">chmod +x gobarrygo-linux-amd64</span><br>
+            <span class="prompt">$</span> <span class="cmd">./gobarrygo-linux-amd64</span>
           </div>
 
           <h3 style="margin-top: 1.25rem;">AppImage (any distro)</h3>

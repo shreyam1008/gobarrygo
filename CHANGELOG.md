@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.0.6 CHITRA - 2026-03-13
+
+- Fixed critical bug: frontend assets not embedded in production binary (Go build cache stale after `wails3 generate bindings`).
+- Added `go clean -cache` before all `go build` steps in CI/release to prevent stale embeds.
+- Added `frontend/dist/index.html` existence check as a build guard in all workflows.
+- Added standalone Linux binary (`gobarrygo-linux-amd64`) to release artifacts for single-file usage.
+- Updated site with direct download links for all platforms and CLI install instructions.
+- Added SEO assets: `robots.txt`, `sitemap.xml`, JSON-LD structured data, comprehensive meta tags.
+- Made site fully mobile-responsive with sticky nav and touch-friendly layout.
+
 ## 0.0.5 BHOODEVI - 2026-03-13
 
 - Added standalone `install.sh` for one-command installation on Linux, macOS, and Windows (Git Bash).

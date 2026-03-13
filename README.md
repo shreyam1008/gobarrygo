@@ -1,6 +1,6 @@
 # GoBarryGo
 
-GoBarryGo is a lightweight desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.5` is codename `BHOODEVI`.
+GoBarryGo is a lightweight desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.6` is codename `CHITRA`.
 
 ## What It Does
 
