@@ -75,27 +75,6 @@ jobs:
         run: echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
         shell: bash
 
-      - name: Prepare generated assets
-        run: |
-          go run ./tools/generate_appicon.go
-          wails3 generate icons -input build/appicon.png -macfilename build/darwin/icons.icns -windowsfilename build/windows/icon.ico
-          mkdir -p frontend/dist
-          touch frontend/dist/.gitkeep
-          wails3 generate bindings -clean=true -ts
-        shell: bash
-
-      - name: Cache frontend node_modules
-        id: cache-frontend-modules
-        uses: actions/cache@v4
-        with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/bun.lock', 'frontend/package.json') }}
-
-      - name: Install frontend dependencies
-        if: steps.cache-frontend-modules.outputs.cache-hit != 'true'
-        working-directory: frontend
-        run: bun install --frozen-lockfile
-
       - name: Bundle aria2c (Linux)
         if: matrix.target == 'linux'
         run: |
@@ -122,6 +101,27 @@ jobs:
           chmod 755 internal/bundled/bin/aria2c
           file internal/bundled/bin/aria2c
         shell: bash
+
+      - name: Prepare generated assets
+        run: |
+          go run ./tools/generate_appicon.go
+          wails3 generate icons -input build/appicon.png -macfilename build/darwin/icons.icns -windowsfilename build/windows/icon.ico
+          mkdir -p frontend/dist
+          touch frontend/dist/.gitkeep
+          wails3 generate bindings -clean=true -ts
+        shell: bash
+
+      - name: Cache frontend node_modules
+        id: cache-frontend-modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/bun.lock', 'frontend/package.json') }}
+
+      - name: Install frontend dependencies
+        if: steps.cache-frontend-modules.outputs.cache-hit != 'true'
+        working-directory: frontend
+        run: bun install --frozen-lockfile
 
       - name: Build Linux release assets
         if: matrix.target == 'linux'
