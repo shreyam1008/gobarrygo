@@ -51,10 +51,20 @@ jobs:
         run: choco install nsis -y
         shell: powershell
 
+      - name: Cache Wails CLI
+        id: cache-wails
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin/wails3
+          key: ${{ runner.os }}-wails3-${{ env.WAILS_VERSION }}
+
       - name: Install Wails CLI
+        if: steps.cache-wails.outputs.cache-hit != 'true'
         run: |
           go install github.com/wailsapp/wails/v3/cmd/wails3@${WAILS_VERSION}
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Add Wails to PATH
+        run: echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
         shell: bash
 
       - name: Prepare generated assets
@@ -62,6 +72,7 @@ jobs:
           go run ./tools/generate_appicon.go
           wails3 generate icons -input build/appicon.png -macfilename build/darwin/icons.icns -windowsfilename build/windows/icon.ico
           mkdir -p frontend/dist
+          touch frontend/dist/.gitkeep
           wails3 generate bindings -clean=true -ts
         shell: bash
 
