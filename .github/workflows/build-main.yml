@@ -62,6 +62,7 @@ jobs:
         if: steps.cache-wails.outputs.cache-hit != 'true'
         run: |
           go install github.com/wailsapp/wails/v3/cmd/wails3@${WAILS_VERSION}
+        shell: bash
 
       - name: Add Wails to PATH
         run: echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
