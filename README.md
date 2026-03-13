@@ -59,7 +59,7 @@ curl -fsSL https://raw.githubusercontent.com/shreyam1008/gobarrygo/main/install.
 
 No Go toolchain, Node.js, or complex dependencies required.
 
-**Website**: [shreyam1008.github.io/gobarrygo](https://shreyam1008.github.io/gobarrygo/)
+**Website**: [https://shreyam1008.github.io/gobarrygo/](https://shreyam1008.github.io/gobarrygo/)
 
 ## Development Setup
 
@@ -89,6 +89,14 @@ task linux:package
 task windows:package
 task darwin:package
 ```
+
+## Latest Builds
+
+You can download the latest development builds (artifacts) for every push to `main`:
+
+1.  Go to the [Actions](https://github.com/shreyam1008/gobarrygo/actions) tab.
+2.  Select the latest successful **build-main** workflow run.
+3.  Scroll down to **Artifacts** and download the package for your platform.
 
 ## Repository Guide
 
