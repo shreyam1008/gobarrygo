@@ -30,6 +30,17 @@ func main() {
 	if err := png.Encode(file, canvas); err != nil {
 		panic(err)
 	}
+
+	small := downscale2x(canvas)
+	smallFile, err := os.Create("build/appicon-512.png")
+	if err != nil {
+		panic(err)
+	}
+	defer smallFile.Close()
+
+	if err := png.Encode(smallFile, small); err != nil {
+		panic(err)
+	}
 }
 
 func fillBackground(img *image.NRGBA) {
@@ -206,6 +217,26 @@ func blend(a, b color.NRGBA, t float64) color.NRGBA {
 		B: uint8(float64(a.B) + (float64(b.B)-float64(a.B))*t),
 		A: 255,
 	}
+}
+
+func downscale2x(src *image.NRGBA) *image.NRGBA {
+	half := size / 2
+	dst := image.NewNRGBA(image.Rect(0, 0, half, half))
+	for y := 0; y < half; y++ {
+		for x := 0; x < half; x++ {
+			p00 := src.NRGBAAt(x*2, y*2)
+			p10 := src.NRGBAAt(x*2+1, y*2)
+			p01 := src.NRGBAAt(x*2, y*2+1)
+			p11 := src.NRGBAAt(x*2+1, y*2+1)
+			dst.SetNRGBA(x, y, color.NRGBA{
+				R: uint8((uint16(p00.R) + uint16(p10.R) + uint16(p01.R) + uint16(p11.R)) / 4),
+				G: uint8((uint16(p00.G) + uint16(p10.G) + uint16(p01.G) + uint16(p11.G)) / 4),
+				B: uint8((uint16(p00.B) + uint16(p10.B) + uint16(p01.B) + uint16(p11.B)) / 4),
+				A: uint8((uint16(p00.A) + uint16(p10.A) + uint16(p01.A) + uint16(p11.A)) / 4),
+			})
+		}
+	}
+	return dst
 }
 
 func min(a, b int) int {
