@@ -4,8 +4,8 @@ set -e
 # Build configuration
 APP_NAME="gobarrygo"
 BUNDLE_ID="io.shreyam.gobarrygo"
-VERSION="0.0.1"
-BUILD_NUMBER="0.0.1"
+VERSION="0.0.5"
+BUILD_NUMBER="0.0.5"
 BUILD_DIR="build/ios"
 TARGET="simulator"
 

@@ -50,8 +50,11 @@ jobs:
 
       - name: Install NSIS
         if: matrix.target == 'windows'
-        run: choco install nsis -y
         shell: powershell
+        run: |
+          choco install nsis -y
+          $nsisDir = if (Test-Path "C:\Program Files (x86)\NSIS") { "C:\Program Files (x86)\NSIS" } else { "C:\Program Files\NSIS" }
+          echo $nsisDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Cache Wails CLI
         id: cache-wails
@@ -84,7 +87,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: frontend/node_modules
-          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/bun.lockb', 'frontend/package.json') }}
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/bun.lock', 'frontend/package.json') }}
 
       - name: Install frontend dependencies
         if: steps.cache-frontend-modules.outputs.cache-hit != 'true'
@@ -97,22 +100,33 @@ jobs:
           bun --cwd frontend run build
           go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
           wails3 generate .desktop -name "gobarrygo" -exec "gobarrygo" -icon "gobarrygo" -outputfile build/linux/gobarrygo.desktop -categories "Network;Utility;"
-          # Use flat structure for AppImage to avoid path nesting bugs
-          mkdir -p build/appimage_staging
-          cp bin/gobarrygo build/appimage_staging/
-          # Icon name MUST match the desktop file 'Icon' field (gobarrygo)
-          cp build/appicon.png build/appimage_staging/gobarrygo.png
-          cp build/linux/gobarrygo.desktop build/appimage_staging/
-          # CRITICAL: Copy binary to root to prevent deep nesting in AppDir/usr/bin
-          cp bin/gobarrygo .
-          wails3 generate appimage \
-            -binary gobarrygo \
-            -icon build/appimage_staging/gobarrygo.png \
-            -desktopfile build/appimage_staging/gobarrygo.desktop \
-            -outputdir "$GITHUB_WORKSPACE/bin" \
-            -builddir "$GITHUB_WORKSPACE/build/linux/appimage_work"
-          # Standardize naming for install.sh
-          mv bin/gobarrygo-x86_64.AppImage bin/gobarrygo-amd64.AppImage
+
+          # Build AppImage with linuxdeploy (replaces wails3 generate appimage for reliability)
+          WORK="$GITHUB_WORKSPACE/build/linux/appimage_work"
+          APPDIR="$WORK/gobarrygo-x86_64.AppDir"
+          mkdir -p "$APPDIR/usr/bin"
+          cp bin/gobarrygo "$APPDIR/usr/bin/gobarrygo"
+          cp build/appicon.png "$WORK/gobarrygo.png"
+
+          curl -fsSL -o "$WORK/linuxdeploy-x86_64.AppImage" \
+            "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          chmod +x "$WORK/linuxdeploy-x86_64.AppImage"
+          curl -fsSL -o "$WORK/linuxdeploy-plugin-gtk.sh" \
+            "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
+          chmod +x "$WORK/linuxdeploy-plugin-gtk.sh"
+
+          export DEPLOY_GTK_VERSION=3
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          export PATH="$WORK:$PATH"
+          "$WORK/linuxdeploy-x86_64.AppImage" \
+            --appdir "$APPDIR" \
+            --executable "$APPDIR/usr/bin/gobarrygo" \
+            --desktop-file build/linux/gobarrygo.desktop \
+            --icon-file "$WORK/gobarrygo.png" \
+            --plugin gtk \
+            --output appimage
+
+          mv gobarrygo*.AppImage bin/gobarrygo-amd64.AppImage
           wails3 tool package -name "gobarrygo" -format deb -config build/linux/nfpm/nfpm.yaml -out bin
           wails3 tool package -name "gobarrygo" -format rpm -config build/linux/nfpm/nfpm.yaml -out bin
         shell: bash
@@ -128,11 +142,7 @@ jobs:
           go build -tags production -trimpath -buildvcs=false -ldflags='-w -s -H windowsgui' -o bin/gobarrygo.exe .
           Remove-Item wails_windows_amd64.syso
           wails3 generate webview2bootstrapper -dir "$PWD/build/windows/nsis"
-          # Ensure makensis is in path (installed via choco but often needs manual path addition)
-          if (!(Get-Command makensis.exe -ErrorAction SilentlyContinue)) {
-            $env:PATH += ";C:\Program Files (x86)\NSIS"
-          }
-          makensis -DARG_WAILS_AMD64_BINARY="$PWD\bin\gobarrygo.exe" "$PWD\build\windows\nsis\project.nsi"
+          makensis.exe -DARG_WAILS_AMD64_BINARY="$PWD\bin\gobarrygo.exe" "$PWD\build\windows\nsis\project.nsi"
         shell: powershell
 
       - name: Build macOS artifacts

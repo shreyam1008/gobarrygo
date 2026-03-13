@@ -8,7 +8,18 @@
 The version string is kept in:
 
 - `internal/version/version.go`
+- `internal/config/defaults.go` (UserAgent string)
 - `build/config.yml`
+- `build/windows/info.json`
+- `build/windows/nsis/wails_tools.nsh`
+- `build/linux/nfpm/nfpm.yaml`
+- `build/darwin/Info.plist`
+- `build/darwin/Info.dev.plist`
+- `build/ios/build.sh`
+- `build/ios/Info.plist`
+- `build/ios/Info.dev.plist`
+- `frontend/package.json`
+- `site/package.json`
 - `CHANGELOG.md`
 - `README.md`
 
