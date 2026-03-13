@@ -1,0 +1,50 @@
+version: '3'
+
+includes:
+  common: ../Taskfile.yml
+
+tasks:
+  build:
+    summary: Build the Windows executable
+    deps:
+      - task: common:go:mod:tidy
+      - task: common:build:frontend
+        vars:
+          DEV: '{{.DEV}}'
+      - task: common:generate:icons
+      - task: generate:syso
+    cmds:
+      - go build {{if eq .DEV "true"}}-buildvcs=false{{else}}-tags production -trimpath -buildvcs=false -ldflags="-w -s -H windowsgui"{{end}} -o {{.BIN_DIR}}/{{.APP_NAME}}.exe
+      - cmd: powershell Remove-item wails_windows_{{.ARCH | default ARCH}}.syso
+        platforms: [windows]
+      - cmd: rm -f wails_windows_{{.ARCH | default ARCH}}.syso
+        platforms: [linux, darwin]
+    env:
+      GOOS: windows
+      GOARCH: '{{.ARCH | default ARCH}}'
+      CGO_ENABLED: 0
+
+  package:
+    summary: Build the NSIS installer
+    deps:
+      - task: build
+    cmds:
+      - wails3 generate webview2bootstrapper -dir {{.ROOT_DIR}}/build/windows/nsis
+      - |
+        {{if eq OS "windows"}}
+        makensis -DARG_WAILS_{{if eq (.ARCH | default ARCH) "arm64"}}ARM64{{else}}AMD64{{end}}_BINARY="{{.ROOT_DIR}}\{{.BIN_DIR}}\{{.APP_NAME}}.exe" {{.ROOT_DIR}}\build\windows\nsis\project.nsi
+        {{else}}
+        makensis -DARG_WAILS_{{if eq (.ARCH | default ARCH) "arm64"}}ARM64{{else}}AMD64{{end}}_BINARY="{{.ROOT_DIR}}/{{.BIN_DIR}}/{{.APP_NAME}}.exe" {{.ROOT_DIR}}/build/windows/nsis/project.nsi
+        {{end}}
+
+  generate:syso:
+    summary: Generate the Windows resource syso
+    dir: build
+    cmds:
+      - wails3 generate syso -arch {{.ARCH | default ARCH}} -icon windows/icon.ico -manifest windows/wails.exe.manifest -info windows/info.json -out ../wails_windows_{{.ARCH | default ARCH}}.syso
+
+  run:
+    summary: Run the Windows binary
+    cmds:
+      - '{{.BIN_DIR}}/{{.APP_NAME}}.exe'
+

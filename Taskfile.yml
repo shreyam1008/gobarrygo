@@ -1,0 +1,46 @@
+version: '3'
+
+includes:
+  common: ./build/Taskfile.yml
+  windows: ./build/windows/Taskfile.yml
+  darwin: ./build/darwin/Taskfile.yml
+  linux: ./build/linux/Taskfile.yml
+
+vars:
+  APP_NAME: "gobarrygo"
+  BIN_DIR: "bin"
+  VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
+
+tasks:
+  dev:
+    summary: Runs the desktop app in development mode
+    cmds:
+      - wails3 dev -config ./build/config.yml -port {{.VITE_PORT}}
+
+  build:
+    summary: Builds the application for the current platform
+    cmds:
+      - task: "{{OS}}:build"
+
+  package:
+    summary: Builds installable packages for the current platform
+    cmds:
+      - task: "{{OS}}:package"
+
+  test:
+    summary: Runs frontend and backend tests
+    cmds:
+      - task: common:test:go
+      - task: common:test:frontend
+
+  lint:
+    summary: Runs type and code checks
+    cmds:
+      - task: common:check:go
+      - task: common:check:frontend
+
+  update:build-assets:
+    summary: Regenerates Wails build assets from build/config.yml
+    cmds:
+      - task: common:update:build-assets
+

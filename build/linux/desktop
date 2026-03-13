@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=GoBarryGo
+Comment=A lightweight desktop download manager powered by aria2c.
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/gobarrygo %u
+Terminal=false
+Type=Application
+Icon=gobarrygo
+Categories=Utility;
+StartupWMClass=gobarrygo
+
+ 
