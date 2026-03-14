@@ -1,7 +1,7 @@
 {
   "name": "gobarrygo-frontend",
   "private": true,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "packageManager": "bun@1.3.10",
   "scripts": {
