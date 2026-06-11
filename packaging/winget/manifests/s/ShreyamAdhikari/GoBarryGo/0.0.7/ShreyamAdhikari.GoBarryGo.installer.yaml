@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: ShreyamAdhikari.GoBarryGo
+PackageVersion: 0.0.7
+ManifestType: installer
+ManifestVersion: 1.6.0
+
+InstallerLocale: en-US
+InstallerType: nullsoft
+Scope: machine
+InstallModes:
+  - interactive
+  - silent
+UpgradeBehavior: install
+
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/shreyam1008/gobarrygo/releases/download/v0.0.7/gobarrygo-amd64-installer.exe
+    # TODO: Replace InstallerSha256 with the actual SHA256 of the installer EXE.
+    # Run: certutil -hashfile gobarrygo-amd64-installer.exe SHA256  (Windows)
+    # or:  sha256sum gobarrygo-amd64-installer.exe                  (Linux/macOS)
+    InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000

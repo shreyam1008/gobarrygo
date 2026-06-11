@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.shreyam1008.GoBarryGo</id>
+  <name>GoBarryGo</name>
+  <summary>Lightweight desktop download manager powered by aria2c</summary>
+  <developer id="io.github.shreyam1008">
+    <name>Shreyam Adhikari</name>
+  </developer>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>GoBarryGo is a lightweight desktop download manager that controls aria2c through JSON-RPC. It uses parallel segmented downloads for faster file transfers.</p>
+    <p>Features:</p>
+    <ul>
+      <li>Parallel segmented downloads via aria2c</li>
+      <li>Add downloads by URL, paste, or drag and drop</li>
+      <li>Pause, resume, and cancel downloads</li>
+      <li>Speed and progress tracking</li>
+      <li>Download queue management</li>
+      <li>Lightweight — no bundled download engine, aria2c does the work</li>
+    </ul>
+    <p>Requires aria2c to be installed on the system.</p>
+  </description>
+  <launchable type="desktop-id">io.github.shreyam1008.GoBarryGo.desktop</launchable>
+  <url type="homepage">https://shreyam1008.github.io/gobarrygo/</url>
+  <url type="bugtracker">https://github.com/shreyam1008/gobarrygo/issues</url>
+  <url type="vcs-browser">https://github.com/shreyam1008/gobarrygo</url>
+  <categories>
+    <category>Network</category>
+    <category>FileTransfer</category>
+    <category>Utility</category>
+  </categories>
+  <keywords>
+    <keyword>download</keyword>
+    <keyword>downloader</keyword>
+    <keyword>aria2</keyword>
+    <keyword>aria2c</keyword>
+    <keyword>manager</keyword>
+    <keyword>file transfer</keyword>
+    <keyword>parallel</keyword>
+  </keywords>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="0.0.7" date="2026-06-01">
+      <description>
+        <p>CHITRA release. Stability improvements and UI refinements.</p>
+      </description>
+    </release>
+  </releases>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Download manager main view</caption>
+      <image>https://shreyam1008.github.io/gobarrygo/screenshot-1.png</image>
+    </screenshot>
+  </screenshots>
+</component>

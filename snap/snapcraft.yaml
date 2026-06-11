@@ -1,0 +1,86 @@
+name: gobarrygo
+base: core24
+version: "0.0.7"
+summary: Lightweight desktop download manager powered by aria2c
+description: |
+  GoBarryGo is a lightweight desktop download manager that controls aria2c
+  through JSON-RPC and uses parallel segmented downloads for faster transfers.
+
+  Features:
+  - Parallel segmented downloads via aria2c
+  - Add downloads by URL, paste, or drag and drop
+  - Pause, resume, and cancel downloads
+  - Speed and progress tracking
+  - Download queue management
+  - Lightweight — uses your system aria2c
+
+  Requires aria2c: sudo apt install aria2
+
+grade: stable
+confinement: strict
+icon: build/appicon.png
+
+architectures:
+  - build-on: [amd64]
+
+apps:
+  gobarrygo:
+    command: bin/gobarrygo
+    extensions: [gnome]
+    plugs:
+      - network
+      - home
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+      - opengl
+      - browser-support
+
+parts:
+  gobarrygo:
+    plugin: go
+    source: .
+    build-snaps:
+      - go/1.26/stable
+      - node/22/stable
+    build-packages:
+      - gcc
+      - pkg-config
+      - libgtk-3-dev
+      - libwebkit2gtk-4.1-dev
+      - bun
+    stage-packages:
+      - libgtk-3-0t64
+      - libwebkit2gtk-4.1-0
+    build-environment:
+      - CGO_ENABLED: "1"
+    override-build: |
+      # Build frontend assets first (Wails v3 pattern)
+      cd frontend && bun install && bun run build && cd ..
+      go build -tags production -trimpath -ldflags="-s -w" -o $CRAFT_PART_INSTALL/bin/gobarrygo .
+
+  desktop-entry:
+    plugin: dump
+    source: .
+    organize:
+      build/linux/desktop: share/applications/io.github.shreyam1008.GoBarryGo.desktop
+      build/appicon.png: share/icons/hicolor/512x512/apps/gobarrygo.png
+      build/linux/io.github.shreyam1008.GoBarryGo.metainfo.xml: share/metainfo/io.github.shreyam1008.GoBarryGo.metainfo.xml
+    stage:
+      - share/applications/io.github.shreyam1008.GoBarryGo.desktop
+      - share/icons/hicolor/512x512/apps/gobarrygo.png
+      - share/metainfo/io.github.shreyam1008.GoBarryGo.metainfo.xml
+
+# NOTE ON ARIA2C ACCESS:
+# Snap strict confinement cannot reach host binaries.
+# Options:
+#   a) Bundle aria2c as a static binary inside the snap.
+#      Add it as a separate part:
+#        aria2:
+#          plugin: nil
+#          stage-packages: [aria2]
+#      This pulls aria2 into the snap at install time.
+#   b) Use confinement: classic to access host aria2c.
+# Recommended: bundle aria2 as a stage-package (option a).
+# Add "- aria2" to stage-packages in the gobarrygo part.
