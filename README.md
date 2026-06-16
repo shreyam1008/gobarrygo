@@ -1,6 +1,6 @@
 # GoBarryGo
 
-GoBarryGo is a lightweight desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.6` is codename `CHITRA`.
+GoBarryGo is a lightweight native desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.8` is codename `CHITRA`.
 
 ## What It Does
 
@@ -131,4 +131,3 @@ Not fully verified locally:
 - [Releasing](docs/RELEASING.md)
 - [Changelog](CHANGELOG.md)
 - [Third Party Notices](THIRD_PARTY_NOTICES.md)
-
