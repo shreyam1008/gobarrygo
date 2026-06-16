@@ -1,7 +1,7 @@
 # GoBarryGo — Packaging Guide
 
 Publisher: Shreyam Adhikari (shreyam1008@gmail.com)
-Version: 0.0.8
+Version: 0.0.9
 
 ---
 
@@ -12,13 +12,13 @@ Version: 0.0.8
 | `../build/linux/io.github.shreyam1008.GoBarryGo.metainfo.xml` | AppStream metadata |
 | `../build/linux/io.github.shreyam1008.GoBarryGo.flatpak.yml` | Flatpak manifest for Flathub |
 | `../snap/snapcraft.yaml` | Snap Store packaging |
-| `winget/manifests/s/ShreyamAdhikari/GoBarryGo/0.0.8/` | WinGet manifests |
+| `winget/manifests/s/ShreyamAdhikari/GoBarryGo/0.0.9/` | WinGet manifests |
 
 ---
 
 ## Step 0: Prepare release artifacts
 
-Before submitting to any store, create a GitHub Release tag `v0.0.8` with:
+Before submitting to any store, create a GitHub Release tag `v0.0.9` with:
 
 ```
 gobarrygo-amd64-installer.exe    (Windows NSIS installer from Wails build)
@@ -56,7 +56,7 @@ on the host PATH.
 sudo snap install snapcraft --classic
 cd /home/shre/Desktop/me/gobarrygo
 snapcraft
-# Produces: gobarrygo_0.0.8_amd64.snap
+# Produces: gobarrygo_0.0.9_amd64.snap
 ```
 
 ### Register and upload
@@ -64,7 +64,7 @@ snapcraft
 ```bash
 snapcraft login
 snapcraft register gobarrygo
-snapcraft upload gobarrygo_0.0.8_amd64.snap --release=stable
+snapcraft upload gobarrygo_0.0.9_amd64.snap --release=stable
 ```
 
 ---
@@ -107,7 +107,7 @@ python3 flatpak-go-vendor.py go.sum > build/linux/go-vendor-sources.json
 ### Replace placeholder commit SHA
 
 ```bash
-git ls-remote https://github.com/shreyam1008/gobarrygo refs/tags/v0.0.8
+git ls-remote https://github.com/shreyam1008/gobarrygo refs/tags/v0.0.9
 # Paste SHA into flatpak manifest
 ```
 
@@ -140,12 +140,12 @@ certutil -hashfile gobarrygo-amd64-installer.exe SHA256
 ### Steps
 
 1. Fork https://github.com/microsoft/winget-pkgs
-2. Copy `packaging/winget/manifests/s/ShreyamAdhikari/GoBarryGo/0.0.8/` into your fork
+2. Copy `packaging/winget/manifests/s/ShreyamAdhikari/GoBarryGo/0.0.9/` into your fork
 3. Replace placeholder `InstallerSha256` with real sha256
 4. Validate:
 
 ```powershell
-winget validate manifests/s/ShreyamAdhikari/GoBarryGo/0.0.8/
+winget validate manifests/s/ShreyamAdhikari/GoBarryGo/0.0.9/
 ```
 
 5. Submit PR

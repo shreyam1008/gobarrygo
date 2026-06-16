@@ -1,6 +1,6 @@
 # GoBarryGo
 
-GoBarryGo is a lightweight native desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.8` is codename `CHITRA`.
+GoBarryGo is a lightweight native desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.9` is codename `CHITRA`.
 
 ## What It Does
 
@@ -17,7 +17,7 @@ GoBarryGo is a lightweight native desktop download manager for `aria2c`, built f
 - The frontend uses Bun + React 19.2 + TypeScript 5.9 with generated Wails bindings.
 - Release artifacts are published through GitHub Releases when a version tag is pushed. Pushes to `main` run validation and a Linux smoke build.
 
-## Features In 0.0.8 CHITRA
+## Features In 0.0.9 CHITRA
 
 - Add downloads by URL, paste multiple independent links, or use optional output name, directory override, headers, and User-Agent override.
 - Pause, resume, retry, remove, open file, and reveal folder actions.

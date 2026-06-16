@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.9 CHITRA - 2026-06-16
+
+- **Added:** Downloader metrics strip for current speed, peak speed, active ETA, backlog, queue state, connections, and issues.
+- **Fixed:** Multi-link paste now queues independent aria2 downloads instead of treating separate links as mirrors for one item.
+- **Improved:** aria2 session state is saved after queue mutations and during graceful shutdown.
+- **Improved:** Backend polling is adaptive and skips unchanged snapshot events to reduce idle runtime work.
+- **Improved:** Native minimum-width layout keeps the inspector available and keeps bundle budget checks in release jobs.
+- **Updated:** Site and packaging metadata point to v0.0.9.
+
 ## 0.0.8 CHITRA - 2026-06-16
 
 - **Redesigned:** Desktop app UI is now a compact native download-manager workspace instead of a webpage-style hero layout.

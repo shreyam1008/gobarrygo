@@ -1,6 +1,6 @@
 name: gobarrygo
 base: core24
-version: "0.0.8"
+version: "0.0.9"
 summary: Lightweight desktop download manager powered by aria2c
 description: |
   GoBarryGo is a lightweight desktop download manager that controls aria2c

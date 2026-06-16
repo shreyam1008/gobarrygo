@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.locale.1.6.0.schema.json
+PackageIdentifier: ShreyamAdhikari.GoBarryGo
+PackageVersion: 0.0.9
+PackageLocale: en-US
+ManifestType: locale
+ManifestVersion: 1.6.0
+
+PackageName: GoBarryGo
+Publisher: Shreyam Adhikari
+PublisherUrl: https://shreyam1008.com.np/
+PublisherSupportUrl: https://github.com/shreyam1008/gobarrygo/issues
+License: MIT
+LicenseUrl: https://github.com/shreyam1008/gobarrygo/blob/main/LICENSE
+ShortDescription: Lightweight desktop download manager powered by aria2c
+Description: |-
+  GoBarryGo is a lightweight desktop download manager that controls aria2c
+  through JSON-RPC and uses parallel segmented downloads for faster transfers.
+Tags:
+  - download
+  - downloader
+  - aria2
+  - file-transfer
