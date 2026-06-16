@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.8 CHITRA - 2026-06-16
+
+- **Redesigned:** Desktop app UI is now a compact native download-manager workspace instead of a webpage-style hero layout.
+- **Added:** Quick paste queueing, remembered download locations, in-app About links, richer inspector actions, and clearer aria2 setup.
+- **Improved:** Download list rendering now uses a virtualized queue and transform-based progress updates for better responsiveness.
+- **Added:** Frontend bundle budget check in CI to keep the native app shell lightweight.
+- **Updated:** Site and packaging metadata point to v0.0.8.
+
 ## 0.0.7 CHITRA - 2026-03-14
 
 - **Fixed:** Bundled aria2c now correctly initializes its session file on first run, fixing the "rpc did not become ready" error for new users.

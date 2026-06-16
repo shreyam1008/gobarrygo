@@ -41,9 +41,9 @@
   </keywords>
   <content_rating type="oars-1.1" />
   <releases>
-    <release version="0.0.7" date="2026-06-01">
+    <release version="0.0.8" date="2026-06-16">
       <description>
-        <p>CHITRA release. Stability improvements and UI refinements.</p>
+        <p>CHITRA release with a redesigned native download-manager interface, quick paste queueing, remembered locations, and performance budget checks.</p>
       </description>
     </release>
   </releases>

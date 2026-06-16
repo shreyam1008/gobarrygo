@@ -338,7 +338,8 @@ select:focus {
 .filter-list,
 .location-list,
 .sidebar-section--metrics,
-.file-list {
+.file-list,
+.about-links {
   display: grid;
   gap: 6px;
 }
@@ -392,6 +393,39 @@ select:focus {
   gap: 6px;
   color: var(--muted);
   font-size: 0.78rem;
+}
+
+.about-panel {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.about-panel p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.about-links button {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #14171c;
+  color: var(--text);
+  padding: 0 8px;
+  overflow: hidden;
+  font-size: 0.78rem;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.about-links button:hover {
+  border-color: var(--line-strong);
+  background: var(--panel-3);
 }
 
 .queue-panel {
@@ -890,9 +924,15 @@ select:focus {
   }
 
   .titlebar__actions,
+  .health-banner__actions,
   .quick-add-panel__meta,
   .queue-toolbar__tools {
     flex-wrap: wrap;
+  }
+
+  .health-banner {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .app-workspace {

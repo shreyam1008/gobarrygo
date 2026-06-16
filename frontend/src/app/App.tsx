@@ -24,6 +24,7 @@ import {
   Search,
   Settings,
   SlidersHorizontal,
+  UserRound,
   X,
   Zap,
 } from "lucide-react";
@@ -293,24 +294,48 @@ export function App() {
             </div>
           </section>
 
-          <section className="sidebar-section">
+          {directoryOptions.length > 0 && (
+            <section className="sidebar-section">
+              <div className="section-heading">
+                <HardDrive size={15} />
+                <span>Locations</span>
+              </div>
+              <div className="location-list">
+                {directoryOptions.slice(0, 6).map((directory) => (
+                  <button
+                    key={directory}
+                    type="button"
+                    className={`location-row ${quickDirectory === directory ? "location-row--active" : ""}`}
+                    onClick={() => appStore.setQuickDirectory(directory)}
+                    title={directory}
+                  >
+                    <FolderOpen size={14} />
+                    <span>{directory}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="sidebar-section about-panel">
             <div className="section-heading">
-              <HardDrive size={15} />
-              <span>Locations</span>
+              <UserRound size={15} />
+              <span>About</span>
             </div>
-            <div className="location-list">
-              {directoryOptions.slice(0, 6).map((directory) => (
-                <button
-                  key={directory}
-                  type="button"
-                  className={`location-row ${quickDirectory === directory ? "location-row--active" : ""}`}
-                  onClick={() => appStore.setQuickDirectory(directory)}
-                  title={directory}
-                >
-                  <FolderOpen size={14} />
-                  <span>{directory}</span>
-                </button>
-              ))}
+            <p>By Shreyam Adhikari, also known as shreyam1008.</p>
+            <div className="about-links">
+              <button type="button" onClick={() => void appStore.openWebsite("https://shreyam1008.github.io/gobarrygo/")}>
+                Project site
+              </button>
+              <button type="button" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008/gobarrygo")}>
+                GitHub repo
+              </button>
+              <button type="button" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008")}>
+                @shreyam1008
+              </button>
+              <button type="button" onClick={() => void appStore.openWebsite("https://shreyam1008.com.np")}>
+                shreyam1008.com.np
+              </button>
             </div>
           </section>
 
