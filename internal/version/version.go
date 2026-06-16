@@ -1,6 +1,6 @@
 package version
 
 const (
-	Number   = "0.0.8"
+	Number   = "0.0.9"
 	Codename = "CHITRA"
 )

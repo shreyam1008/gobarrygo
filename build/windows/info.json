@@ -1,15 +1,15 @@
 {
 	"fixed": {
-		"file_version": "0.0.8"
+		"file_version": "0.0.9"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "0.0.8",
+			"ProductVersion": "0.0.9",
 			"CompanyName": "Shreyam1008",
 			"FileDescription": "A lightweight desktop download manager powered by aria2c.",
 			"LegalCopyright": "(c) 2026, Shreyam1008",
 			"ProductName": "GoBarryGo",
-			"Comments": "Version 0.0.8 CHITRA"
+			"Comments": "Version 0.0.9 CHITRA"
 		}
 	}
 }
