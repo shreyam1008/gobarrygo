@@ -18,7 +18,7 @@ release: "1"
 
 contents:
   - src: "./bin/gobarrygo"
-    dst: "/usr/local/bin/gobarrygo"
+    dst: "/usr/bin/gobarrygo"
   - src: "./build/appicon.png"
     dst: "/usr/share/icons/hicolor/128x128/apps/gobarrygo.png"
   - src: "./build/linux/gobarrygo.desktop"

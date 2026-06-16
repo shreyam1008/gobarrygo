@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -11,6 +12,12 @@ import (
 	"github.com/shreyam1008/gobarrygo/internal/system"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/services/notifications"
+)
+
+const (
+	activePollInterval = 1 * time.Second
+	queuedPollInterval = 1500 * time.Millisecond
+	idlePollInterval   = 3 * time.Second
 )
 
 type Service struct {
@@ -54,8 +61,8 @@ func (s *Service) Bootstrap() (contracts.AppSnapshot, error) {
 	if err != nil {
 		return contracts.AppSnapshot{}, err
 	}
-	s.startPoller()
 	s.publishSnapshot(snapshot)
+	s.startPoller()
 	return snapshot, nil
 }
 
@@ -200,27 +207,32 @@ func (s *Service) OpenWebsite(url string) error {
 
 func (s *Service) startPoller() {
 	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	if s.pollCancel != nil {
+		s.mu.Unlock()
 		return
 	}
 
 	ctx, cancel := context.WithCancel(s.callContext())
 	s.pollCancel = cancel
+	interval := pollInterval(s.last)
+	s.mu.Unlock()
 
 	go func() {
-		ticker := time.NewTicker(1200 * time.Millisecond)
-		defer ticker.Stop()
+		timer := time.NewTimer(interval)
+		defer timer.Stop()
 		for {
 			select {
 			case <-ctx.Done():
 				return
-			case <-ticker.C:
+			case <-timer.C:
 				snapshot, err := s.controller.Refresh(ctx)
 				if err == nil {
 					s.publishSnapshot(snapshot)
+					interval = pollInterval(snapshot)
+				} else {
+					interval = idlePollInterval
 				}
+				timer.Reset(interval)
 			}
 		}
 	}()
@@ -241,10 +253,24 @@ func (s *Service) publishSnapshot(snapshot contracts.AppSnapshot) {
 	s.last = snapshot
 	s.mu.Unlock()
 
+	if reflect.DeepEqual(previous, snapshot) {
+		return
+	}
+
 	s.emitNotifications(previous, snapshot)
 	if s.app != nil {
 		_ = s.app.Event.Emit(contracts.EventSnapshot, snapshot)
 	}
+}
+
+func pollInterval(snapshot contracts.AppSnapshot) time.Duration {
+	if snapshot.Health.Ready && snapshot.Metrics.ActiveCount > 0 {
+		return activePollInterval
+	}
+	if snapshot.Health.Ready && snapshot.Metrics.WaitingCount > 0 {
+		return queuedPollInterval
+	}
+	return idlePollInterval
 }
 
 func (s *Service) emitNotifications(previous, next contracts.AppSnapshot) {

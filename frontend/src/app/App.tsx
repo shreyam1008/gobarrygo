@@ -10,13 +10,16 @@ import {
 } from "react";
 import {
   Activity,
+  AlertTriangle,
   ArrowDownToLine,
   ClipboardPaste,
+  Clock3,
   Download,
   FolderOpen,
   Gauge,
   HardDrive,
   ListFilter,
+  Network,
   Pause,
   Play,
   Plus,
@@ -29,7 +32,7 @@ import {
   Zap,
 } from "lucide-react";
 import { appStore, useAppState } from "@/lib/store/app-store";
-import { buildDownloadDashboard, parseDownloadURLs } from "@/lib/download-model";
+import { analyzeDownloadInput, buildDownloadDashboard, describeDownloadInput } from "@/lib/download-model";
 import { formatBytes, formatETA, formatPercent, formatSpeed } from "@/lib/format";
 import { HealthBanner } from "@/features/health/health-banner";
 import { AddDownloadDialog } from "@/features/downloads/add-download-dialog";
@@ -92,7 +95,18 @@ export function App() {
 
   const quickDirectory = state.quickDirectory || state.snapshot.preferences.downloadDirectory;
   const quickDirectoryOptions = directoryOptions.length > 0 ? directoryOptions : [""];
-  const parsedQuickURLs = useMemo(() => parseDownloadURLs(quickURLs), [quickURLs]);
+  const quickAnalysis = useMemo(() => analyzeDownloadInput(quickURLs), [quickURLs]);
+  const parsedQuickURLs = quickAnalysis.urls;
+  const quickInputMessage = describeDownloadInput(quickAnalysis);
+  const quickHasText = quickURLs.trim().length > 0;
+  const quickActionDisabled = quickSubmitting || (quickHasText && parsedQuickURLs.length === 0);
+  const quickActionLabel = !quickHasText
+    ? "Add details"
+    : parsedQuickURLs.length > 1
+      ? `Queue ${parsedQuickURLs.length}`
+      : parsedQuickURLs.length === 1
+        ? "Queue"
+        : "No links";
   const overallProgress = dashboard.totalBytes > 0
     ? (dashboard.completedBytes / dashboard.totalBytes) * 100
     : 0;
@@ -258,13 +272,57 @@ export function App() {
           <button
             type="button"
             className="tool-button tool-button--primary"
-            disabled={quickSubmitting}
+            disabled={quickActionDisabled}
             onClick={() => void submitQuickDownload()}
           >
             <Zap size={16} />
-            {parsedQuickURLs.length > 1 ? `Queue ${parsedQuickURLs.length}` : "Queue"}
+            {quickActionLabel}
           </button>
+          {quickInputMessage ? (
+            <span className="quick-add-panel__hint" aria-live="polite">
+              {quickInputMessage}
+            </span>
+          ) : null}
         </div>
+      </section>
+
+      <section className="metrics-strip" aria-label="Download metrics">
+        <MetricCard
+          icon={<Activity size={16} />}
+          label="Down now"
+          value={formatSpeed(state.snapshot.metrics.downloadSpeed)}
+          detail={`Peak ${formatSpeed(state.peakDownloadSpeed)}`}
+        />
+        <MetricCard
+          icon={<Clock3 size={16} />}
+          label="Active ETA"
+          value={formatMetricETA(dashboard.activeETASeconds)}
+          detail={`${formatBytes(dashboard.activeBytesRemaining)} left active`}
+        />
+        <MetricCard
+          icon={<HardDrive size={16} />}
+          label="Backlog"
+          value={formatBytes(dashboard.totalRemainingBytes)}
+          detail={`${formatPercent(overallProgress)} overall`}
+        />
+        <MetricCard
+          icon={<ListFilter size={16} />}
+          label="Queue"
+          value={`${state.snapshot.metrics.activeCount} active`}
+          detail={`${state.snapshot.metrics.waitingCount} queued · ${dashboard.counts.paused ?? 0} paused`}
+        />
+        <MetricCard
+          icon={<Network size={16} />}
+          label="Connections"
+          value={String(dashboard.connectionCount)}
+          detail={`${formatSpeed(state.snapshot.metrics.uploadSpeed || dashboard.totalUploadSpeed)} up`}
+        />
+        <MetricCard
+          icon={<AlertTriangle size={16} />}
+          label="Issues"
+          value={String(dashboard.issueCount)}
+          detail={dashboard.issueCount > 0 ? "Needs attention" : "Clean"}
+        />
       </section>
 
       <main className="app-workspace">
@@ -324,25 +382,25 @@ export function App() {
             </div>
             <p>By Shreyam Adhikari, also known as shreyam1008.</p>
             <div className="about-links">
-              <button type="button" onClick={() => void appStore.openWebsite("https://shreyam1008.github.io/gobarrygo/")}>
-                Project site
+              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://shreyam1008.github.io/gobarrygo/")}>
+                <span>Project site</span>
               </button>
-              <button type="button" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008/gobarrygo")}>
-                GitHub repo
+              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008/gobarrygo")}>
+                <span>GitHub repo</span>
               </button>
-              <button type="button" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008")}>
-                @shreyam1008
+              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008")}>
+                <span>@shreyam1008</span>
               </button>
-              <button type="button" onClick={() => void appStore.openWebsite("https://shreyam1008.com.np")}>
-                shreyam1008.com.np
+              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://shreyam1008.com.np")}>
+                <span>shreyam1008.com.np</span>
               </button>
             </div>
           </section>
 
           <section className="sidebar-section sidebar-section--metrics">
-            <MetricLine icon={<Activity size={15} />} label="Speed" value={formatSpeed(dashboard.totalSpeed)} />
-            <MetricLine icon={<Gauge size={15} />} label="Progress" value={formatPercent(overallProgress)} />
-            <MetricLine icon={<HardDrive size={15} />} label="Stored" value={`${formatBytes(dashboard.completedBytes)} / ${formatBytes(dashboard.totalBytes)}`} />
+            <MetricLine icon={<Clock3 size={15} />} label="ETA" value={formatMetricETA(dashboard.activeETASeconds)} />
+            <MetricLine icon={<Gauge size={15} />} label="Peak" value={formatSpeed(state.peakDownloadSpeed)} />
+            <MetricLine icon={<Network size={15} />} label="Connections" value={String(dashboard.connectionCount)} />
           </section>
         </aside>
 
@@ -445,9 +503,28 @@ const VirtualDownloadList = memo(function VirtualDownloadList({
   onSelect: (gid: string) => void;
 }) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number | null>(null);
   const [viewport, setViewport] = useState({ height: 520, scrollTop: 0 });
 
   const measure = useCallback(() => {
+    if (animationFrameRef.current !== null) {
+      return;
+    }
+
+    animationFrameRef.current = window.requestAnimationFrame(() => {
+      animationFrameRef.current = null;
+      const node = viewportRef.current;
+      if (!node) {
+        return;
+      }
+      setViewport({
+        height: node.clientHeight || 520,
+        scrollTop: node.scrollTop,
+      });
+    });
+  }, []);
+
+  const measureNow = useCallback(() => {
     const node = viewportRef.current;
     if (!node) {
       return;
@@ -459,15 +536,21 @@ const VirtualDownloadList = memo(function VirtualDownloadList({
   }, []);
 
   useEffect(() => {
-    measure();
+    measureNow();
     const node = viewportRef.current;
     if (!node || typeof ResizeObserver === "undefined") {
       return;
     }
-    const observer = new ResizeObserver(measure);
+    const observer = new ResizeObserver(measureNow);
     observer.observe(node);
-    return () => observer.disconnect();
-  }, [measure]);
+    return () => {
+      observer.disconnect();
+      if (animationFrameRef.current !== null) {
+        window.cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [measureNow]);
 
   const start = Math.max(0, Math.floor(viewport.scrollTop / rowHeight) - rowOverscan);
   const visibleCount = Math.ceil(viewport.height / rowHeight) + rowOverscan * 2;
@@ -523,6 +606,30 @@ function MetricLine({ icon, label, value }: { icon: ReactNode; label: string; va
       <strong>{value}</strong>
     </div>
   );
+}
+
+function MetricCard({
+  icon,
+  label,
+  value,
+  detail,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="metric-line">
+      <span>{icon}{label}</span>
+      <strong>{value}</strong>
+      <small>{detail}</small>
+    </div>
+  );
+}
+
+function formatMetricETA(seconds: number): string {
+  return seconds > 0 ? formatETA(seconds) : "Idle";
 }
 
 function uniqueNonEmpty(values: string[]): string[] {

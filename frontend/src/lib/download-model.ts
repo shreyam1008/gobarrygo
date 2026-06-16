@@ -1,7 +1,8 @@
 import type { DownloadFilter, DownloadItem } from "@/types/contracts";
 
 const knownStatuses = ["active", "waiting", "paused", "complete", "error", "removed"] as const;
-const downloadURLPattern = /^(?:https?:\/\/|magnet:|(?:s?ftp|ftps):\/\/)/i;
+const supportedProtocols = new Set(["http:", "https:", "ftp:", "ftps:", "sftp:"]);
+const maybeURLPattern = /^[a-z][a-z0-9+.-]*:/i;
 
 export type DownloadStatusCounts = Record<string, number>;
 
@@ -18,28 +19,103 @@ export type DownloadDashboard = {
   filteredDownloads: DownloadItem[];
   counts: DownloadStatusCounts;
   totalSpeed: number;
+  totalUploadSpeed: number;
   totalBytes: number;
   completedBytes: number;
+  totalRemainingBytes: number;
   activeBytesRemaining: number;
+  activeETASeconds: number;
+  connectionCount: number;
+  issueCount: number;
   topDirectories: DownloadDirectorySummary[];
   recentDirectories: DownloadDirectorySummary[];
 };
 
-export function parseDownloadURLs(text: string): string[] {
+export type DownloadInputAnalysis = {
+  urls: string[];
+  duplicateCount: number;
+  rejectedCount: number;
+  tokenCount: number;
+};
+
+export function analyzeDownloadInput(text: string): DownloadInputAnalysis {
   const seen = new Set<string>();
   const urls: string[] = [];
+  let duplicateCount = 0;
+  let rejectedCount = 0;
+  let tokenCount = 0;
 
   for (const part of text.split(/\s+/)) {
-    const candidate = part.trim();
-    if (!candidate || !downloadURLPattern.test(candidate) || seen.has(candidate)) {
+    const candidate = normalizeCandidateToken(part);
+    if (!candidate) {
       continue;
     }
 
+    if (!isSupportedDownloadURL(candidate)) {
+      if (maybeURLPattern.test(candidate) || candidate.includes("://")) {
+        rejectedCount += 1;
+        tokenCount += 1;
+      }
+      continue;
+    }
+
+    tokenCount += 1;
+    if (seen.has(candidate)) {
+      duplicateCount += 1;
+      continue;
+    }
     seen.add(candidate);
     urls.push(candidate);
   }
 
-  return urls;
+  return {
+    urls,
+    duplicateCount,
+    rejectedCount,
+    tokenCount,
+  };
+}
+
+export function parseDownloadURLs(text: string): string[] {
+  return analyzeDownloadInput(text).urls;
+}
+
+function normalizeCandidateToken(value: string): string {
+  return value
+    .trim()
+    .replace(/^[<([{'"`]+/, "")
+    .replace(/[>\])}'"`,;.]+$/, "");
+}
+
+function isSupportedDownloadURL(value: string): boolean {
+  if (/^magnet:\?/i.test(value)) {
+    return true;
+  }
+
+  try {
+    return supportedProtocols.has(new URL(value).protocol.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+export function describeDownloadInput(analysis: DownloadInputAnalysis): string {
+  if (analysis.urls.length === 0 && analysis.tokenCount > 0) {
+    return "No supported download links";
+  }
+  if (analysis.urls.length === 0) {
+    return "";
+  }
+
+  const parts = [`${analysis.urls.length} link${analysis.urls.length === 1 ? "" : "s"} ready`];
+  if (analysis.duplicateCount > 0) {
+    parts.push(`${analysis.duplicateCount} duplicate${analysis.duplicateCount === 1 ? "" : "s"} skipped`);
+  }
+  if (analysis.rejectedCount > 0) {
+    parts.push(`${analysis.rejectedCount} unsupported skipped`);
+  }
+
+  return parts.join(" · ");
 }
 
 export function buildDownloadDashboard(
@@ -52,9 +128,12 @@ export function buildDownloadDashboard(
   const query = search.trim().toLowerCase();
   const filteredDownloads: DownloadItem[] = [];
   let totalSpeed = 0;
+  let totalUploadSpeed = 0;
   let totalBytes = 0;
   let completedBytes = 0;
+  let totalRemainingBytes = 0;
   let activeBytesRemaining = 0;
+  let connectionCount = 0;
 
   for (let index = 0; index < downloads.length; index += 1) {
     const item = downloads[index];
@@ -64,8 +143,11 @@ export function buildDownloadDashboard(
 
     counts[item.status] = (counts[item.status] ?? 0) + 1;
     totalSpeed += nonNegativeNumber(item.downloadSpeed);
+    totalUploadSpeed += nonNegativeNumber(item.uploadSpeed);
     totalBytes += itemTotalBytes;
     completedBytes += itemCompletedBytes;
+    totalRemainingBytes += itemRemainingBytes;
+    connectionCount += Math.max(0, item.connections);
 
     if (item.status === "active") {
       activeBytesRemaining += itemRemainingBytes;
@@ -84,9 +166,16 @@ export function buildDownloadDashboard(
     filteredDownloads,
     counts,
     totalSpeed,
+    totalUploadSpeed,
     totalBytes,
     completedBytes,
+    totalRemainingBytes,
     activeBytesRemaining,
+    activeETASeconds: totalSpeed > 0 && activeBytesRemaining > 0
+      ? Math.ceil(activeBytesRemaining / totalSpeed)
+      : 0,
+    connectionCount,
+    issueCount: (counts.error ?? 0) + (counts.removed ?? 0),
     topDirectories: directorySummaries.slice().sort(compareTopDirectories),
     recentDirectories: directorySummaries.slice().sort(compareRecentDirectories),
   };

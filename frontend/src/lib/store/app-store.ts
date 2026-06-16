@@ -52,6 +52,7 @@ type AppState = {
   search: string;
   quickDirectory: string;
   recentDirectories: string[];
+  peakDownloadSpeed: number;
   addDialogOpen: boolean;
   preferencesOpen: boolean;
   toasts: Toast[];
@@ -171,6 +172,7 @@ class AppStore {
     search: persistedUIState.search ?? "",
     quickDirectory: persistedUIState.quickDirectory ?? "",
     recentDirectories: persistedUIState.recentDirectories ?? [],
+    peakDownloadSpeed: 0,
     addDialogOpen: false,
     preferencesOpen: false,
     toasts: [],
@@ -288,11 +290,21 @@ class AppStore {
       return false;
     }
 
+    const outputName = input.outputName.trim();
+    if (urls.length > 1 && outputName) {
+      this.pushToast({
+        kind: "error",
+        title: "Output name needs one URL",
+        message: "Queue multiple links without a shared output name, or add one link at a time.",
+      });
+      return false;
+    }
+
     try {
       const snapshot = await addDownload(
         new AddDownloadRequest({
           urls,
-          outputName: input.outputName.trim(),
+          outputName,
           directory: input.directory.trim(),
           headers,
           userAgent: input.userAgent.trim(),
@@ -448,6 +460,7 @@ class AppStore {
         : snapshot.downloads[0]?.gid ?? null,
       quickDirectory: this.state.quickDirectory || snapshot.preferences.downloadDirectory,
       recentDirectories,
+      peakDownloadSpeed: Math.max(this.state.peakDownloadSpeed, snapshot.metrics.downloadSpeed),
     });
   }
 

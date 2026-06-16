@@ -136,6 +136,16 @@ func (c *Client) RemoveDownloadResult(ctx context.Context, gid string) error {
 	return err
 }
 
+func (c *Client) SaveSession(ctx context.Context) error {
+	_, err := c.call(ctx, "aria2.saveSession")
+	return err
+}
+
+func (c *Client) Shutdown(ctx context.Context) error {
+	_, err := c.call(ctx, "aria2.shutdown")
+	return err
+}
+
 func (c *Client) PauseAll(ctx context.Context) error {
 	_, err := c.call(ctx, "aria2.pauseAll")
 	return err

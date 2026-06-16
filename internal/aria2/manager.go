@@ -68,11 +68,11 @@ func (m *Manager) Snapshot(ctx context.Context, prefs contracts.Preferences) ([]
 	if err != nil {
 		return nil, contracts.Metrics{}, health, err
 	}
-	waiting, err := client.TellWaiting(ctx, 0, 200)
+	waiting, err := client.TellWaiting(ctx, 0, 1000)
 	if err != nil {
 		return nil, contracts.Metrics{}, health, err
 	}
-	stopped, err := client.TellStopped(ctx, 0, 200)
+	stopped, err := client.TellStopped(ctx, 0, 1000)
 	if err != nil {
 		return nil, contracts.Metrics{}, health, err
 	}
@@ -93,10 +93,10 @@ func (m *Manager) Snapshot(ctx context.Context, prefs contracts.Preferences) ([]
 	}
 
 	metrics := contracts.Metrics{
-		ActiveCount:   len(active),
-		WaitingCount:  len(waiting),
-		StoppedCount:  len(stopped),
-		TotalCount:    len(items),
+		ActiveCount:   parseInt(stat.NumActive),
+		WaitingCount:  parseInt(stat.NumWaiting),
+		StoppedCount:  parseInt(stat.NumStopped),
+		TotalCount:    parseInt(stat.NumActive) + parseInt(stat.NumWaiting) + parseInt(stat.NumStopped),
 		DownloadSpeed: parseInt64(stat.DownloadSpeed),
 		UploadSpeed:   parseInt64(stat.UploadSpeed),
 	}
@@ -121,15 +121,19 @@ func (m *Manager) AddDownload(ctx context.Context, prefs contracts.Preferences, 
 		"auto-file-renaming":        boolString(prefs.AutoRename),
 		"user-agent":                pickString(input.UserAgent, prefs.UserAgent),
 	}
-	if input.OutputName != "" {
+	if input.OutputName != "" && len(input.URLs) == 1 {
 		options["out"] = input.OutputName
 	}
 	if len(input.Headers) > 0 {
 		options["header"] = input.Headers
 	}
 
-	_, err = client.AddURI(ctx, input.URLs, options)
-	return err
+	for _, uri := range input.URLs {
+		if _, err := client.AddURI(ctx, []string{uri}, copyOptions(options)); err != nil {
+			return err
+		}
+	}
+	return client.SaveSession(ctx)
 }
 
 func (m *Manager) Pause(ctx context.Context, prefs contracts.Preferences, gid string) error {
@@ -185,7 +189,10 @@ func (m *Manager) Retry(ctx context.Context, prefs contracts.Preferences, gid st
 	}
 
 	_, err = client.AddURI(ctx, uris, options)
-	return err
+	if err != nil {
+		return err
+	}
+	return client.SaveSession(ctx)
 }
 
 func (m *Manager) Remove(ctx context.Context, prefs contracts.Preferences, gid string, deleteFiles bool) error {
@@ -209,7 +216,7 @@ func (m *Manager) Remove(ctx context.Context, prefs contracts.Preferences, gid s
 		}
 	}
 
-	return nil
+	return client.SaveSession(ctx)
 }
 
 func (m *Manager) PauseAll(ctx context.Context, prefs contracts.Preferences) error {
@@ -344,12 +351,34 @@ func (m *Manager) bootstrapLocked(ctx context.Context, prefs contracts.Preferenc
 }
 
 func (m *Manager) shutdownLocked() error {
-	if m.cancel != nil {
+	if m.client != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		_ = m.client.SaveSession(ctx)
+		_ = m.client.Shutdown(ctx)
+		cancel()
+	}
+
+	if m.cmd != nil && m.cmd.Process != nil {
+		done := make(chan struct{})
+		go func() {
+			_, _ = m.cmd.Process.Wait()
+			close(done)
+		}()
+
+		select {
+		case <-done:
+		case <-time.After(3 * time.Second):
+			if m.cancel != nil {
+				m.cancel()
+			}
+			_ = m.cmd.Process.Kill()
+			<-done
+		}
+	} else if m.cancel != nil {
 		m.cancel()
 	}
-	if m.cmd != nil && m.cmd.Process != nil {
-		_ = m.cmd.Process.Kill()
-		_, _ = m.cmd.Process.Wait()
+	if m.cancel != nil {
+		m.cancel()
 	}
 
 	m.cmd = nil
@@ -359,6 +388,14 @@ func (m *Manager) shutdownLocked() error {
 	m.binaryPath = ""
 	m.cancel = nil
 	return nil
+}
+
+func copyOptions(input map[string]any) map[string]any {
+	output := make(map[string]any, len(input))
+	for key, value := range input {
+		output[key] = value
+	}
+	return output
 }
 
 func (m *Manager) readyClient(ctx context.Context, prefs contracts.Preferences) (*Client, contracts.Health, error) {

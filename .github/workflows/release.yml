@@ -129,6 +129,7 @@ jobs:
         if: matrix.target == 'linux'
         run: |
           (cd frontend && bun run build)
+          (cd frontend && bun run budget)
           echo '--- frontend/dist contents ---' && ls -la frontend/dist/ && echo '---'
           test -f frontend/dist/index.html || (echo 'ERROR: frontend build missing index.html' && exit 1)
           go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
@@ -169,6 +170,7 @@ jobs:
         if: matrix.target == 'windows'
         run: |
           Push-Location frontend; bun run build; if ($LASTEXITCODE -ne 0) { exit 1 }; Pop-Location
+          Push-Location frontend; bun run budget; if ($LASTEXITCODE -ne 0) { exit 1 }; Pop-Location
           Write-Host '--- frontend/dist contents ---'
           Get-ChildItem frontend/dist -Recurse
           Write-Host '---'
@@ -187,6 +189,7 @@ jobs:
         if: matrix.target == 'macos'
         run: |
           (cd frontend && bun run build)
+          (cd frontend && bun run budget)
           echo '--- frontend/dist contents ---' && ls -la frontend/dist/ && echo '---'
           test -f frontend/dist/index.html || (echo 'ERROR: frontend build missing index.html' && exit 1)
           go build -tags production -trimpath -buildvcs=false -ldflags="-w -s" -o bin/gobarrygo .
