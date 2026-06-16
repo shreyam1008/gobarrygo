@@ -15,7 +15,4 @@ UpgradeBehavior: install
 Installers:
   - Architecture: x64
     InstallerUrl: https://github.com/shreyam1008/gobarrygo/releases/download/v0.0.8/gobarrygo-amd64-installer.exe
-    # TODO: Replace InstallerSha256 with the actual SHA256 of the installer EXE.
-    # Run: certutil -hashfile gobarrygo-amd64-installer.exe SHA256  (Windows)
-    # or:  sha256sum gobarrygo-amd64-installer.exe                  (Linux/macOS)
-    InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000
+    InstallerSha256: 532a1f33c93a044bfe87255a77f21746cc333bb6ce34f821605389403f1a3b5b
