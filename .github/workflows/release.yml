@@ -10,7 +10,6 @@ env:
   BUN_VERSION: "1.3.10"
   WAILS_VERSION: "v3.0.0-alpha.74"
   ARIA2_VERSION: "1.37.0"
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -28,9 +27,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
@@ -60,7 +59,7 @@ jobs:
 
       - name: Cache Wails CLI
         id: cache-wails
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/go/bin/wails3
           key: ${{ runner.os }}-wails3-${{ env.WAILS_VERSION }}
@@ -116,7 +115,7 @@ jobs:
 
       - name: Cache frontend node_modules
         id: cache-frontend-modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: frontend/node_modules
           key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/bun.lock', 'frontend/package.json') }}
@@ -201,7 +200,7 @@ jobs:
         shell: bash
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.target }}-release
           path: |
@@ -217,7 +216,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
 
@@ -228,7 +227,6 @@ jobs:
           (cd release && sha256sum * > checksums.txt)
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: release/*
-
