@@ -15,4 +15,4 @@ UpgradeBehavior: install
 Installers:
   - Architecture: x64
     InstallerUrl: https://github.com/shreyam1008/gobarrygo/releases/download/v0.0.9/gobarrygo-amd64-installer.exe
-    InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000
+    InstallerSha256: 97d6d12bdf99edbe9f0de9a393ffeb850802fd0184f552736cdaa2255c134ed6
