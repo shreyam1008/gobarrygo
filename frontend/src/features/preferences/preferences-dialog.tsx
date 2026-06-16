@@ -23,11 +23,20 @@ export function PreferencesDialog({ open, preferences, onClose }: Props) {
   }
 
   return (
-    <div className="modal-backdrop" role="presentation">
-      <section className="modal-card modal-card--wide">
+    <div className="modal-backdrop" role="presentation" onMouseDown={(event) => {
+      if (event.target === event.currentTarget) {
+        onClose();
+      }
+    }}>
+      <section
+        className="modal-card modal-card--wide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="preferences-title"
+      >
         <header className="modal-card__header">
           <div>
-            <h2>Preferences</h2>
+            <h2 id="preferences-title">Preferences</h2>
             <p>Tune how aggressively aria2 parallelizes downloads, where files land, and how session recovery behaves.</p>
           </div>
           <button type="button" className="icon-button" onClick={onClose} aria-label="Close">
@@ -225,4 +234,3 @@ function Switch({
     </label>
   );
 }
-

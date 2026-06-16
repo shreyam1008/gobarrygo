@@ -8,6 +8,7 @@
     "dev": "vite",
     "build:dev": "vite build --mode development --minify false",
     "build": "vite build --mode production",
+    "budget": "node scripts/check-bundle-budget.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "test": "vitest run"
