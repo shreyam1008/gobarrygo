@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  analyzeDownloadInput,
   buildDownloadDashboard,
+  describeDownloadInput,
   parseDownloadURLs,
   type DownloadDirectorySummary,
 } from "@/lib/download-model";
@@ -10,7 +12,7 @@ describe("parseDownloadURLs", () => {
   it("splits whitespace, filters supported URL schemes, and dedupes in order", () => {
     expect(
       parseDownloadURLs(`
-        https://example.com/file.iso
+        <https://example.com/file.iso>,
         not-a-download
         http://mirror.example/file.iso
         magnet:?xt=urn:btih:abc123
@@ -28,6 +30,20 @@ describe("parseDownloadURLs", () => {
       "ftps://secure.example/archive.zip",
       "sftp://server.example/archive.zip",
     ]);
+  });
+
+  it("describes ready, duplicate, and unsupported pasted links", () => {
+    const analysis = analyzeDownloadInput(`
+      https://example.com/file.iso
+      https://example.com/file.iso
+      mailto:test@example.com
+      words that are not links
+    `);
+
+    expect(analysis.urls).toEqual(["https://example.com/file.iso"]);
+    expect(analysis.duplicateCount).toBe(1);
+    expect(analysis.rejectedCount).toBe(1);
+    expect(describeDownloadInput(analysis)).toBe("1 link ready · 1 duplicate skipped · 1 unsupported skipped");
   });
 
   it("returns an empty array for empty or unsupported input", () => {
@@ -50,9 +66,14 @@ describe("buildDownloadDashboard", () => {
       removed: 0,
     });
     expect(dashboard.totalSpeed).toBe(200);
+    expect(dashboard.totalUploadSpeed).toBe(0);
     expect(dashboard.totalBytes).toBe(6600);
     expect(dashboard.completedBytes).toBe(3550);
+    expect(dashboard.totalRemainingBytes).toBe(3050);
     expect(dashboard.activeBytesRemaining).toBe(600);
+    expect(dashboard.activeETASeconds).toBe(3);
+    expect(dashboard.connectionCount).toBe(0);
+    expect(dashboard.issueCount).toBe(1);
   });
 
   it("searches download names and directories case-insensitively", () => {

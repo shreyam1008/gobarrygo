@@ -12,17 +12,18 @@ GoBarryGo is a lightweight native desktop download manager for `aria2c`, built f
 
 ## Product Decisions
 
-- `aria2c` is treated as an external runtime dependency instead of being bundled into the binary.
+- Release artifacts can include a bundled `aria2c` fallback. A custom Preferences path wins first, then `PATH`, then the bundled binary.
 - Wails is pinned to `v3.0.0-alpha.74` because that is the newest Go alpha tag verifiable and buildable in this environment.
 - The frontend uses Bun + React 19.2 + TypeScript 5.9 with generated Wails bindings.
-- Release artifacts are published through GitHub Releases. Pushes to `main` produce build artifacts for inspection.
+- Release artifacts are published through GitHub Releases when a version tag is pushed. Pushes to `main` run validation and a Linux smoke build.
 
-## Features In 0.0.5 BHOODEVI
+## Features In 0.0.8 CHITRA
 
-- Add downloads by URL with optional output name, directory override, headers, and User-Agent override.
+- Add downloads by URL, paste multiple independent links, or use optional output name, directory override, headers, and User-Agent override.
 - Pause, resume, retry, remove, open file, and reveal folder actions.
 - Global pause and resume controls.
 - Health banner for `aria2c` readiness and binary discovery.
+- Compact downloader metrics for speed, peak speed, ETA, backlog, queue state, connections, and issues.
 - Preferences for:
   - `aria2c` binary path
   - download directory
@@ -39,7 +40,7 @@ GoBarryGo is a lightweight native desktop download manager for `aria2c`, built f
 
 - Go `1.26.0`
 - Bun `1.3.10`
-- `aria2c` installed and available on `PATH`, or manually configured in Preferences
+- `aria2c` from Preferences, `PATH`, or the bundled release fallback
 - Wails CLI `v3.0.0-alpha.74`
 
 Linux build prerequisites:
@@ -117,6 +118,7 @@ Verified locally in this workspace:
 - frontend typecheck
 - frontend tests
 - frontend production build
+- frontend bundle budget
 - Go tests for non-GUI packages
 
 Not fully verified locally:

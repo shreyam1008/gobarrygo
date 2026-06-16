@@ -42,15 +42,15 @@ GoBarryGo is organized around one rule: keep Wails thin and keep application log
 5. The frontend store reconciles the incoming snapshot and updates the UI.
 6. Command methods return a fresh snapshot immediately, while background polling keeps the UI live.
 
-## Why `aria2c` Is Not Bundled
+## `aria2c` Resolution Policy
 
-- It keeps app binaries smaller.
-- It avoids redistributing a GPL component inside the desktop package.
-- It lets advanced users point the app at distro-managed or custom-built `aria2c` binaries.
+- A user-selected Preferences path has highest priority.
+- If no custom path is set, GoBarryGo uses `aria2c` from `PATH`.
+- Release builds may embed an `aria2c` fallback and extract it to the user cache when neither of the above is available.
+- Distro packages can choose to depend on a system `aria2c` instead of embedding it, but that packaging policy must match the package metadata and third-party notices.
 
 ## Wails v3 Alpha Risk Containment
 
 - Wails-specific code is concentrated in `main.go`, `internal/api`, generated bindings, and platform packaging files.
 - The download manager core is plain Go and can survive Wails API churn with minimal changes.
 - The frontend talks to a compact service contract and two typed events instead of depending on framework internals.
-
