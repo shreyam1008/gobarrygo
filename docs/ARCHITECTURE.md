@@ -1,6 +1,11 @@
 # Architecture
 
-GoBarryGo is organized around one rule: keep Wails thin and keep application logic portable.
+GoBarryGo is organized around two rules: keep Wails thin and keep application logic
+portable; grow the product as small native modules inside one consistent shell.
+
+The shipped release is downloader-first. The module boundary below is the target
+shape for the suite and does not imply that future file, batch, or workflow modules
+already exist.
 
 ## Layers
 
@@ -32,6 +37,27 @@ GoBarryGo is organized around one rule: keep Wails thin and keep application log
 - `frontend/src/lib/store` contains the global application store.
 - `frontend/src/lib/wails` isolates generated bindings and Wails event subscription details.
 - `frontend/src/features/*` keeps view logic grouped by product surface instead of by generic component type.
+
+### Future module boundary
+
+When a second module is introduced, keep the shell and module responsibilities
+explicit:
+
+- The shell owns navigation, settings, lifecycle, shared job state, notifications,
+  and the selected-module context.
+- A module owns its domain commands, validation, progress details, and recovery
+  rules. The downloader is the first example of this boundary.
+- Long-running work is represented as a typed, cancellable job with a visible state
+  (`queued`, `running`, `paused`, `completed`, `failed`, or `cancelled`).
+- Module code stays in plain Go or framework-independent TypeScript where possible;
+  Wails bindings remain an adapter at the edge.
+- Local records are versioned and exportable. No account, telemetry, or cloud sync is
+  required for a module to function.
+
+The first likely addition is a File Workspace for downloaded outputs, followed by
+previewable Batch Tools. A workflow layer comes later, after job history and recovery
+are proven. See [the product roadmap](product-roadmap.md) for the sequencing and
+release gates.
 
 ## State Flow
 

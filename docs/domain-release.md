@@ -1,11 +1,11 @@
 # Product domain and release contract
 
-`dbterm` is the live reference implementation. The other rows are preparation targets; repository changes alone do not make a domain live.
+`dbterm` is the live reference implementation. GoBarryGo is now also live; the other rows are preparation targets. Repository changes alone do not make a domain live.
 
 | Product | Canonical URL | Pages source | Status |
 | --- | --- | --- | --- |
 | dbterm | `https://dbterm.shreyam1008.com.np/` | `gh-pages` (site plus APT metadata) | **Live** |
-| GoBarryGo | `https://gobarrygo.shreyam1008.com.np/` | GitHub Actions | **Prepared; deployment and public checks pending** |
+| GoBarryGo | `https://gobarrygo.shreyam1008.com.np/` | GitHub Actions | **Live; verified 2026-08-17** |
 | Visualise OKLCH | `https://visualise-oklch.shreyam1008.com.np/` | GitHub Actions | **Prepared; deployment and public checks pending** |
 | shre-skills | `https://skills.shreyam1008.com.np/` | GitHub Actions | **Prepared; deployment and public checks pending** |
 

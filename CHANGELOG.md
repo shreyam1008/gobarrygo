@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- **Positioned:** GoBarryGo is now documented as a native general-work suite with
+  the downloader as its first complete module.
+- **Documented:** Added a staged roadmap for downloader completion, a file workspace,
+  batch tools, and later workflows. Future modules remain explicitly unshipped.
+
 ## 0.0.9 CHITRA - 2026-06-16
 
 - **Added:** Downloader metrics strip for current speed, peak speed, active ETA, backlog, queue state, connections, and issues.

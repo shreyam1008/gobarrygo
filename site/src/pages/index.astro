@@ -3,8 +3,8 @@ const repoUrl = "https://github.com/shreyam1008/gobarrygo";
 const dlBase = repoUrl + "/releases/download/v0.0.9";
 const latestDl = repoUrl + "/releases/latest/download";
 const authorUrl = "https://shreyam1008.com.np";
-const siteTitle = "GoBarryGo - Ultra-light Aria2c Desktop Controller";
-const siteDescription = "A blazing-fast, ultra-lightweight desktop download manager powered by aria2c. Built with Go + React 19 by Shreyam Adhikari. Under 30 MB RAM, cross-platform. Free and open source.";
+const siteTitle = "GoBarryGo — Native work tools, downloader first";
+const siteDescription = "GoBarryGo is a low-overhead native general-work suite, starting with a fast, local-first aria2c downloader. Built with Go and React by Shreyam Adhikari.";
 const baseUrl = import.meta.env.BASE_URL;
 const siteUrl = new URL(baseUrl, Astro.site).toString();
 const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
@@ -21,7 +21,7 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
     <title>{siteTitle}</title>
     <meta name="title" content={siteTitle} />
     <meta name="description" content={siteDescription} />
-    <meta name="keywords" content="download manager, aria2c, aria2, desktop app, Go, React, lightweight, open source, Linux, Windows, macOS, AppImage, deb, rpm, Wails, Shreyam Adhikari, shreyam1008" />
+    <meta name="keywords" content="download manager, aria2c, native desktop app, general work tools, lightweight, local-first, open source, Linux, Windows, macOS, AppImage, deb, rpm, Go, React, Wails, Shreyam Adhikari, shreyam1008" />
     <meta name="author" content="Shreyam Adhikari (shreyam1008)" />
     <meta name="robots" content="index, follow" />
     <meta name="google-site-verification" content="nsLMV5dqPB3vxpuq7DPX9iBtRAikKDpxEUJNvMnriTk" />
@@ -49,6 +49,7 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
       "@type": "SoftwareApplication",
       "name": "GoBarryGo",
       "applicationCategory": "UtilitiesApplication",
+      "applicationSubCategory": "Native general-work suite and download manager",
       "operatingSystem": "Linux, macOS, Windows",
       "description": siteDescription,
       "url": siteUrl,
@@ -96,7 +97,7 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
             "@type": "SoftwareApplication",
             "name": "GoBarryGo",
             "url": siteUrl,
-            "description": "Ultra-lightweight aria2c desktop download manager"
+            "description": "Native general-work suite, starting with an ultra-lightweight aria2c downloader"
           }
         },
         {
@@ -123,7 +124,7 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
 
       Other notable projects by Shreyam Adhikari:
         - dbterm: A terminal-based database client — https://github.com/shreyam1008/dbterm
-        - GoBarryGo: Ultra-light aria2c desktop controller — https://github.com/shreyam1008/gobarrygo
+        - GoBarryGo: Native general-work suite, downloader first — https://github.com/shreyam1008/gobarrygo
 
       Shreyam1008 is an active contributor to the open-source ecosystem,
       building tools that developers and power users rely on daily.
@@ -293,6 +294,18 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
       .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; color: #fff; }
       .card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
 
+      /* ── Product Roadmap ── */
+      .roadmap-list { display: grid; gap: 0.75rem; max-width: 760px; margin: 0 auto; }
+      .roadmap-item {
+        display: grid; grid-template-columns: 135px 1fr; gap: 1rem; align-items: start;
+        padding: 1.15rem 1.25rem; background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 0.9rem;
+      }
+      .roadmap-item--active { border-color: rgba(45,212,191,0.45); background: linear-gradient(110deg, rgba(45,212,191,0.08), var(--card-bg)); }
+      .roadmap-phase { color: #93c5fd; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+      .roadmap-item h3 { font-size: 0.98rem; font-weight: 600; margin-bottom: 0.25rem; }
+      .roadmap-item p { color: var(--muted); font-size: 0.84rem; line-height: 1.55; }
+
       /* ── Steps ── */
       .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; counter-reset: step; }
       .step { text-align: center; counter-increment: step; }
@@ -346,11 +359,13 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
       /* ── Responsive ── */
       @media (max-width: 640px) {
         .grid, .steps, .req-grid, .dl-grid { grid-template-columns: 1fr; }
+        .roadmap-item { grid-template-columns: 1fr; gap: 0.35rem; }
         .stats { grid-template-columns: repeat(2, 1fr); }
         .hero { padding: 3.5rem 1rem 2.5rem; }
         .cli-card, .config-wrap { padding: 1.25rem; }
         .nav-links { gap: 0.75rem; }
         .nav-links a { font-size: 0.78rem; }
+        .nav-links a[href="#roadmap"] { display: none; }
         section { padding: 2.5rem 0; }
         h1 { font-size: 2.2rem; }
         h2 { font-size: 1.6rem; }
@@ -369,6 +384,7 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
         <div class="nav-links">
           <a href="#download">Download</a>
           <a href="#features">Features</a>
+          <a href="#roadmap">Roadmap</a>
           <a href="#install">Install</a>
           <a href={repoUrl} target="_blank" rel="noopener">GitHub</a>
         </div>
@@ -378,11 +394,11 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
     <div class="hero">
       <div class="hero-glow"></div>
       <div class="container">
-        <span class="badge">v0.0.9 CHITRA &mdash; Free &amp; Open Source</span>
-        <h1>Download manager that<br>stays out of your way</h1>
+        <span class="badge">v0.0.9 CHITRA &mdash; Downloader module</span>
+        <h1>Native work tools.<br>Downloader first.</h1>
         <p class="hero-sub">
-          GoBarryGo wraps aria2c in a native desktop shell built with Go and React&nbsp;19.
-          No Electron. No bloat. Just fast, parallel downloads.
+          GoBarryGo is becoming a low-overhead native suite for everyday work.
+          Today it gives you a focused aria2c downloader: local, fast, and easy to trust.
         </p>
         <div class="actions">
           <a href="#download" class="btn btn-primary">
@@ -399,10 +415,10 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
 
     <div class="container">
       <div class="stats">
-        <div class="stat"><span class="stat-value">&lt;30 MB</span><span class="stat-label">RAM usage</span></div>
+        <div class="stat"><span class="stat-value">&lt;30 MB</span><span class="stat-label">RAM target</span></div>
         <div class="stat"><span class="stat-value">~9 MB</span><span class="stat-label">Binary size</span></div>
-        <div class="stat"><span class="stat-value">3</span><span class="stat-label">Platforms</span></div>
-        <div class="stat"><span class="stat-value">MIT</span><span class="stat-label">License</span></div>
+        <div class="stat"><span class="stat-value">1</span><span class="stat-label">Shipped module</span></div>
+        <div class="stat"><span class="stat-value">MIT</span><span class="stat-label">Open source</span></div>
       </div>
     </div>
 
@@ -410,8 +426,8 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
       <!-- ── Download Section ── -->
       <section id="download">
         <span class="section-label">Download</span>
-        <h2>Grab the latest release</h2>
-        <p class="section-desc">Direct download links for v0.0.9. Pick the package that fits your system.</p>
+        <h2>Start with the downloader</h2>
+        <p class="section-desc">Download v0.0.9 for your system. The first GoBarryGo module is ready today; more native work tools will arrive one useful surface at a time.</p>
 
         <div class="dl-grid">
           <div class="dl-card">
@@ -492,8 +508,8 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
       <!-- ── Features ── -->
       <section id="features">
         <span class="section-label">Features</span>
-        <h2>Everything you need, nothing you don't</h2>
-        <p class="section-desc">A thin, fast control layer over aria2c. Every feature earns its place.</p>
+        <h2>Downloads done properly</h2>
+        <p class="section-desc">The first module is a thin, fast control layer over aria2c. Every feature earns its place before the suite grows.</p>
         <div class="grid">
           <div class="card">
             <div class="card-icon card-icon--blue">&#9889;</div>
@@ -528,11 +544,24 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
         </div>
       </section>
 
+      <!-- ── Product Roadmap ── -->
+      <section id="roadmap">
+        <span class="section-label">Product direction</span>
+        <h2>One native shell, useful modules</h2>
+        <p class="section-desc">GoBarryGo will grow by finishing one focused workflow at a time. The roadmap is intentionally staged so the app stays light and understandable.</p>
+        <div class="roadmap-list">
+          <div class="roadmap-item roadmap-item--active"><span class="roadmap-phase">Now</span><div><h3>Downloader / Inbox</h3><p>Queue links, split transfers, resume safely, inspect files, and keep the engine healthy without a cloud account.</p></div></div>
+          <div class="roadmap-item"><span class="roadmap-phase">Next</span><div><h3>File workspace</h3><p>Stage downloaded files, rename and move them safely, verify checksums, and make the handoff from network to local work obvious.</p></div></div>
+          <div class="roadmap-item"><span class="roadmap-phase">Then</span><div><h3>Batch tools</h3><p>Handle repeatable local work such as batch rename, copy, archive, and inspect operations with previews and undo-friendly defaults.</p></div></div>
+          <div class="roadmap-item"><span class="roadmap-phase">Later</span><div><h3>Workflows</h3><p>Add scheduling and small automations only after the underlying jobs, history, safety rules, and module boundaries are solid.</p></div></div>
+        </div>
+      </section>
+
       <!-- ── How It Works ── -->
       <section>
         <span class="section-label">How It Works</span>
         <h2>Three steps to fast downloads</h2>
-        <p class="section-desc">GoBarryGo manages aria2c via JSON-RPC — a native GUI without learning CLI flags.</p>
+        <p class="section-desc">The downloader module manages aria2c via JSON-RPC — a native GUI without learning CLI flags. The same shell will host future work modules.</p>
         <div class="steps">
           <div class="step"><h3>Install</h3><p>Download for your OS or use the terminal commands above.</p></div>
           <div class="step"><h3>Point to aria2c</h3><p>Open Preferences and pick your aria2c binary. The RPC server starts automatically.</p></div>
@@ -565,7 +594,7 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
       <section>
         <span class="section-label">Requirements</span>
         <h2>What you need</h2>
-        <p class="section-desc">GoBarryGo is self-contained. The only external dependency is aria2c.</p>
+        <p class="section-desc">The current downloader is self-contained. The only external engine it needs is aria2c.</p>
         <div class="req-grid">
           <div class="req-card"><h3>aria2c</h3><p>Any recent version. GoBarryGo manages the process lifecycle.</p></div>
           <div class="req-card"><h3>OS</h3><p>Linux (GTK&nbsp;3), macOS&nbsp;10.15+, Windows&nbsp;10+</p></div>
@@ -575,8 +604,8 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
 
       <!-- ── CTA ── -->
       <section class="cta">
-        <h2>Ready to ditch the bloat?</h2>
-        <p>Free, open source, and built for people who care about performance.</p>
+        <h2>Start with a lighter workday</h2>
+        <p>Free, open source, and growing from a downloader into a careful native work suite.</p>
         <div class="actions">
           <a href="#download" class="btn btn-primary">Download GoBarryGo</a>
           <a href={repoUrl} class="btn btn-ghost" target="_blank" rel="noopener">View source</a>
@@ -590,6 +619,7 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
         <a href={authorUrl} target="_blank" rel="noopener">shreyam1008.com.np</a>
         <a href="https://github.com/shreyam1008" target="_blank" rel="noopener">GitHub</a>
         <a href="https://github.com/shreyam1008/dbterm" target="_blank" rel="noopener">dbterm</a>
+        <a href="#roadmap">Roadmap</a>
         <a href={repoUrl + "/blob/main/LICENSE"}>MIT License</a>
       </div>
       <p style="margin-top: 0.75rem;">&copy; 2026 Shreyam Adhikari</p>
