@@ -18,28 +18,42 @@ export function PreferencesDialog({ open, preferences, onClose }: Props) {
     setDraft(new Preferences(preferences));
   }, [preferences, open]);
 
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [onClose, open]);
+
   if (!open) {
     return null;
   }
 
   return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={(event) => {
+    <div className="backdrop" role="presentation" onMouseDown={(event) => {
       if (event.target === event.currentTarget) {
         onClose();
       }
     }}>
       <section
-        className="modal-card modal-card--wide"
+        className="modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="preferences-title"
       >
-        <header className="modal-card__header">
+        <header className="m-head">
           <div>
             <h2 id="preferences-title">Preferences</h2>
             <p>Tune how aggressively aria2 parallelizes downloads, where files land, and how session recovery behaves.</p>
           </div>
-          <button type="button" className="icon-button" onClick={onClose} aria-label="Close">
+          <button type="button" className="bare" onClick={onClose} aria-label="Close preferences" title="Close">
             <X size={18} />
           </button>
         </header>
@@ -47,7 +61,7 @@ export function PreferencesDialog({ open, preferences, onClose }: Props) {
         <div className="prefs-grid">
           <label className="field">
             <span>aria2 binary</span>
-            <div className="field-inline">
+            <div className="field-line">
               <input
                 type="text"
                 value={draft.aria2Binary}
@@ -55,7 +69,9 @@ export function PreferencesDialog({ open, preferences, onClose }: Props) {
               />
               <button
                 type="button"
-                className="secondary-button"
+                className="icon"
+                aria-label="Choose aria2 binary"
+                title="Choose aria2 binary"
                 onClick={async () => {
                   const picked = await appStore.pickAria2Binary();
                   if (picked) {
@@ -70,7 +86,7 @@ export function PreferencesDialog({ open, preferences, onClose }: Props) {
 
           <label className="field">
             <span>Download folder</span>
-            <div className="field-inline">
+            <div className="field-line">
               <input
                 type="text"
                 value={draft.downloadDirectory}
@@ -78,7 +94,9 @@ export function PreferencesDialog({ open, preferences, onClose }: Props) {
               />
               <button
                 type="button"
-                className="secondary-button"
+                className="icon"
+                aria-label="Choose download folder"
+                title="Choose download folder"
                 onClick={async () => {
                   const picked = await appStore.pickDownloadDirectory();
                   if (picked) {
@@ -170,17 +188,17 @@ export function PreferencesDialog({ open, preferences, onClose }: Props) {
           />
         </div>
 
-        <footer className="modal-card__footer">
-          <button type="button" className="secondary-button" onClick={() => void appStore.revealPreferencesFile()}>
+        <footer className="m-foot">
+          <button type="button" className="tool" onClick={() => void appStore.revealPreferencesFile()}>
             Reveal config
           </button>
-          <div className="footer-actions">
-            <button type="button" className="secondary-button" onClick={onClose}>
+          <div className="foot-actions">
+            <button type="button" className="tool" onClick={onClose}>
               Cancel
             </button>
             <button
               type="button"
-              className="primary-button"
+              className="tool primary"
               onClick={() => void appStore.savePreferences(draft)}
             >
               Save preferences

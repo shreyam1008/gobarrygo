@@ -10,7 +10,7 @@ type Props = {
 export function HealthBanner({ health, preferences }: Props) {
   if (health.ready) {
     return (
-      <section className="health-banner health-banner--ok">
+      <section className="health health--ok">
         <div>
           <strong>aria2c ready</strong>
           <p>Local RPC is listening on port {health.rpcPort}.</p>
@@ -20,15 +20,15 @@ export function HealthBanner({ health, preferences }: Props) {
   }
 
   return (
-    <section className="health-banner health-banner--warn">
+    <section className="health health--warn">
       <div>
         <strong>{health.status === "binary_missing" ? "aria2c missing" : "aria2c unavailable"}</strong>
         <p>{health.message || "Choose an aria2c binary to activate the controller."}</p>
       </div>
-      <div className="health-banner__actions">
+      <div className="health-actions">
         <button
           type="button"
-          className="tool-button tool-button--primary"
+          className="tool primary"
           onClick={async () => {
             const picked = await appStore.pickAria2Binary();
             if (picked) {
@@ -39,7 +39,7 @@ export function HealthBanner({ health, preferences }: Props) {
           <FileSearch size={16} />
           Choose
         </button>
-        <button type="button" className="tool-button" onClick={() => appStore.openPreferences()}>
+        <button type="button" className="tool" onClick={() => appStore.openPreferences()}>
           <Settings size={16} />
           Settings
         </button>

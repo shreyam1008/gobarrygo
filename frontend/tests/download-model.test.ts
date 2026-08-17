@@ -3,6 +3,7 @@ import {
   analyzeDownloadInput,
   buildDownloadDashboard,
   describeDownloadInput,
+  getDownloadSourceHost,
   parseDownloadURLs,
   type DownloadDirectorySummary,
 } from "@/lib/download-model";
@@ -48,6 +49,24 @@ describe("parseDownloadURLs", () => {
 
   it("returns an empty array for empty or unsupported input", () => {
     expect(parseDownloadURLs("  \n\t file.txt mailto:test@example.com ")).toEqual([]);
+  });
+});
+
+describe("getDownloadSourceHost", () => {
+  it("uses the first usable aria2 file URI without changing the transport model", () => {
+    const download = createDownload({
+      files: [{
+        index: 0,
+        path: "/downloads/linux.iso",
+        length: 100,
+        completedLength: 25,
+        selected: true,
+        uris: ["https://releases.example.org/images/linux.iso"],
+      }],
+    });
+
+    expect(getDownloadSourceHost(download)).toBe("releases.example.org");
+    expect(getDownloadSourceHost(createDownload({ files: [] }))).toBe("Source pending");
   });
 });
 

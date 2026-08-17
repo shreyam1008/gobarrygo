@@ -1,64 +1,20 @@
-import {
-  memo,
-  useCallback,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-import {
-  Activity,
-  AlertTriangle,
-  ArrowDownToLine,
-  ClipboardPaste,
-  Clock3,
-  Download,
-  FolderOpen,
-  Gauge,
-  HardDrive,
-  ListFilter,
-  Network,
-  Pause,
-  Play,
-  Plus,
-  RefreshCcw,
-  Search,
-  Settings,
-  SlidersHorizontal,
-  UserRound,
-  X,
-  Zap,
-} from "lucide-react";
-import { appStore, useAppState } from "@/lib/store/app-store";
-import { analyzeDownloadInput, buildDownloadDashboard, describeDownloadInput } from "@/lib/download-model";
-import { formatBytes, formatETA, formatPercent, formatSpeed } from "@/lib/format";
-import { HealthBanner } from "@/features/health/health-banner";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { AddDownloadDialog } from "@/features/downloads/add-download-dialog";
-import { DownloadRow } from "@/features/downloads/download-row";
+import { DownloadQueue } from "@/features/downloads/download-queue";
 import { InspectorPanel } from "@/features/downloads/inspector-panel";
+import { HealthBanner } from "@/features/health/health-banner";
+import { NavigationRail } from "@/features/navigation/navigation-rail";
 import { PreferencesDialog } from "@/features/preferences/preferences-dialog";
-import type { DownloadFilter, DownloadItem } from "@/types/contracts";
-
-const filters: Array<{ key: DownloadFilter; label: string }> = [
-  { key: "all", label: "All" },
-  { key: "active", label: "Active" },
-  { key: "waiting", label: "Queued" },
-  { key: "paused", label: "Paused" },
-  { key: "complete", label: "Done" },
-  { key: "error", label: "Issues" },
-];
-
-const rowHeight = 88;
-const rowOverscan = 8;
+import { AppTitlebar } from "@/features/shell/app-titlebar";
+import { QuickAddBar } from "@/features/shell/quick-add-bar";
+import { buildDownloadDashboard } from "@/lib/download-model";
+import { appStore, useAppState } from "@/lib/store/app-store";
 
 export function App() {
   const state = useAppState();
   const searchRef = useRef<HTMLInputElement>(null);
-  const [quickURLs, setQuickURLs] = useState("");
-  const [quickSubmitting, setQuickSubmitting] = useState(false);
   const deferredSearch = useDeferredValue(state.search);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   useEffect(() => {
     void appStore.bootstrap();
@@ -78,13 +34,12 @@ export function App() {
   );
 
   const directoryOptions = useMemo(
-    () =>
-      uniqueNonEmpty([
-        state.quickDirectory,
-        state.snapshot.preferences.downloadDirectory,
-        ...state.recentDirectories,
-        ...dashboard.recentDirectories.slice(0, 5).map((item) => item.directory),
-      ]),
+    () => uniqueNonEmpty([
+      state.quickDirectory,
+      state.snapshot.preferences.downloadDirectory,
+      ...state.recentDirectories,
+      ...dashboard.recentDirectories.slice(0, 5).map((item) => item.directory),
+    ]),
     [
       state.quickDirectory,
       state.snapshot.preferences.downloadDirectory,
@@ -94,65 +49,21 @@ export function App() {
   );
 
   const quickDirectory = state.quickDirectory || state.snapshot.preferences.downloadDirectory;
-  const quickDirectoryOptions = directoryOptions.length > 0 ? directoryOptions : [""];
-  const quickAnalysis = useMemo(() => analyzeDownloadInput(quickURLs), [quickURLs]);
-  const parsedQuickURLs = quickAnalysis.urls;
-  const quickInputMessage = describeDownloadInput(quickAnalysis);
-  const quickHasText = quickURLs.trim().length > 0;
-  const quickActionDisabled = quickSubmitting || (quickHasText && parsedQuickURLs.length === 0);
-  const quickActionLabel = !quickHasText
-    ? "Add details"
-    : parsedQuickURLs.length > 1
-      ? `Queue ${parsedQuickURLs.length}`
-      : parsedQuickURLs.length === 1
-        ? "Queue"
-        : "No links";
-  const overallProgress = dashboard.totalBytes > 0
-    ? (dashboard.completedBytes / dashboard.totalBytes) * 100
-    : 0;
-
-  const submitQuickDownload = useCallback(async () => {
-    if (parsedQuickURLs.length === 0) {
-      appStore.openAddDialog();
-      return;
-    }
-
-    setQuickSubmitting(true);
-    try {
-      const success = await appStore.submitDownload({
-        urlsText: quickURLs,
-        outputName: "",
-        directory: quickDirectory,
-        headersText: "",
-        userAgent: state.snapshot.preferences.userAgent,
-      });
-      if (success) {
-        setQuickURLs("");
-      }
-    } finally {
-      setQuickSubmitting(false);
-    }
-  }, [parsedQuickURLs.length, quickDirectory, quickURLs, state.snapshot.preferences.userAgent]);
-
-  const pasteIntoQuickAdd = useCallback(async () => {
-    try {
-      const clipboardText = await navigator.clipboard?.readText();
-      if (clipboardText) {
-        setQuickURLs((current) => [current, clipboardText].filter(Boolean).join("\n"));
-      }
-    } catch {
-      appStore.openAddDialog();
-    }
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      const editingText =
-        target instanceof HTMLInputElement ||
-        target instanceof HTMLTextAreaElement ||
-        target instanceof HTMLSelectElement ||
-        target?.isContentEditable;
+      const editingOrInteractive = Boolean(target?.closest(
+        "input, textarea, select, button, a, summary, [contenteditable='true']",
+      ));
+      const targetRow = target?.closest<HTMLElement>("[data-download-gid]");
+      const shortcutGID = targetRow?.dataset.downloadGid || selectedDownload?.gid;
+      const shortcutStatus = targetRow?.dataset.st || selectedDownload?.status;
+      const modalOpen = state.addDialogOpen || state.preferencesOpen;
+
+      if (modalOpen) {
+        return;
+      }
 
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "n") {
         event.preventDefault();
@@ -166,66 +77,46 @@ export function App() {
         return;
       }
 
-      if (editingText || !selectedDownload) {
+      if (event.key === "Escape" && detailsOpen) {
+        setDetailsOpen(false);
         return;
       }
 
-      if (event.key === " " && (selectedDownload.status === "active" || selectedDownload.status === "waiting")) {
+      if (editingOrInteractive || !shortcutGID) {
+        return;
+      }
+
+      if (event.key === " " && (shortcutStatus === "active" || shortcutStatus === "waiting")) {
         event.preventDefault();
-        void appStore.pauseDownload(selectedDownload.gid);
-      } else if (event.key === " " && selectedDownload.status === "paused") {
+        void appStore.pauseDownload(shortcutGID);
+      } else if (event.key === " " && shortcutStatus === "paused") {
         event.preventDefault();
-        void appStore.resumeDownload(selectedDownload.gid);
-      } else if (event.key === "Enter" && selectedDownload.status === "complete") {
+        void appStore.resumeDownload(shortcutGID);
+      } else if (event.key === "Enter" && shortcutStatus === "complete") {
         event.preventDefault();
-        void appStore.openDownloadedFile(selectedDownload.gid);
+        void appStore.openDownloadedFile(shortcutGID);
       } else if (event.key === "Delete" || event.key === "Backspace") {
         event.preventDefault();
-        void appStore.removeDownload(selectedDownload.gid, false);
+        void appStore.removeDownload(shortcutGID, false);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedDownload]);
+  }, [detailsOpen, selectedDownload, state.addDialogOpen, state.preferencesOpen]);
 
   return (
-    <div className="app-shell">
-      <header className="titlebar">
-        <div className="titlebar__identity">
-          <span className="app-mark">
-            <ArrowDownToLine size={18} />
-          </span>
-          <div>
-            <strong>GoBarryGo</strong>
-            <span>{state.snapshot.version.number} {state.snapshot.version.codename}</span>
-          </div>
-        </div>
+    <div className="shell">
+      <AppTitlebar
+        version={state.snapshot.version}
+        health={state.snapshot.health}
+      />
 
-        <div className="titlebar__status" data-ready={state.snapshot.health.ready}>
-          <span />
-          {state.snapshot.health.ready ? `RPC ${state.snapshot.health.rpcPort}` : "Engine setup needed"}
-        </div>
-
-        <div className="titlebar__actions">
-          <button type="button" className="tool-button tool-button--primary" onClick={() => appStore.openAddDialog()}>
-            <Plus size={16} />
-            Add
-          </button>
-          <button type="button" className="tool-button" onClick={() => void appStore.pauseAll()} title="Pause all">
-            <Pause size={16} />
-          </button>
-          <button type="button" className="tool-button" onClick={() => void appStore.resumeAll()} title="Resume all">
-            <Play size={16} />
-          </button>
-          <button type="button" className="tool-button" onClick={() => void appStore.openDownloadDirectory()} title="Open download folder">
-            <FolderOpen size={16} />
-          </button>
-          <button type="button" className="tool-button" onClick={() => appStore.openPreferences()} title="Preferences">
-            <Settings size={16} />
-          </button>
-        </div>
-      </header>
+      <QuickAddBar
+        directory={quickDirectory}
+        directoryOptions={directoryOptions.length > 0 ? directoryOptions : [""]}
+        defaultUserAgent={state.snapshot.preferences.userAgent}
+      />
 
       {!state.snapshot.health.ready ? (
         <HealthBanner
@@ -234,229 +125,28 @@ export function App() {
         />
       ) : null}
 
-      <section className="quick-add-panel" aria-label="Quick add download">
-        <div className="quick-add-panel__input">
-          <Download size={17} />
-          <textarea
-            rows={2}
-            placeholder="Paste one or many download links"
-            value={quickURLs}
-            onChange={(event) => setQuickURLs(event.target.value)}
-          />
-          {quickURLs ? (
-            <button type="button" className="icon-button" onClick={() => setQuickURLs("")} aria-label="Clear quick add" title="Clear">
-              <X size={16} />
-            </button>
-          ) : null}
-        </div>
-
-        <div className="quick-add-panel__meta">
-          <div className="location-select">
-            <HardDrive size={15} />
-            <select
-              value={quickDirectory}
-              onChange={(event) => appStore.setQuickDirectory(event.target.value)}
-              aria-label="Quick add download folder"
-            >
-              {quickDirectoryOptions.map((directory) => (
-                <option key={directory || "default"} value={directory}>
-                  {directory || "Default download folder"}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button type="button" className="tool-button" onClick={pasteIntoQuickAdd}>
-            <ClipboardPaste size={16} />
-            Paste
-          </button>
-          <button
-            type="button"
-            className="tool-button tool-button--primary"
-            disabled={quickActionDisabled}
-            onClick={() => void submitQuickDownload()}
-          >
-            <Zap size={16} />
-            {quickActionLabel}
-          </button>
-          {quickInputMessage ? (
-            <span className="quick-add-panel__hint" aria-live="polite">
-              {quickInputMessage}
-            </span>
-          ) : null}
-        </div>
-      </section>
-
-      <section className="metrics-strip" aria-label="Download metrics">
-        <MetricCard
-          icon={<Activity size={16} />}
-          label="Down now"
-          value={formatSpeed(state.snapshot.metrics.downloadSpeed)}
-          detail={`Peak ${formatSpeed(state.peakDownloadSpeed)}`}
+      <main className={`workspace ${detailsOpen ? "workspace--details" : ""}`}>
+        <NavigationRail
+          currentFilter={state.filter}
+          downloads={state.snapshot.downloads}
+          counts={dashboard.counts}
+          directoryOptions={directoryOptions}
+          quickDirectory={quickDirectory}
         />
-        <MetricCard
-          icon={<Clock3 size={16} />}
-          label="Active ETA"
-          value={formatMetricETA(dashboard.activeETASeconds)}
-          detail={`${formatBytes(dashboard.activeBytesRemaining)} left active`}
+
+        <DownloadQueue
+          dashboard={dashboard}
+          metrics={state.snapshot.metrics}
+          peakDownloadSpeed={state.peakDownloadSpeed}
+          loading={state.loading}
+          search={state.search}
+          searchRef={searchRef}
+          selectedGID={state.selectedGID}
+          onShowDetails={() => setDetailsOpen(true)}
         />
-        <MetricCard
-          icon={<HardDrive size={16} />}
-          label="Backlog"
-          value={formatBytes(dashboard.totalRemainingBytes)}
-          detail={`${formatPercent(overallProgress)} overall`}
-        />
-        <MetricCard
-          icon={<ListFilter size={16} />}
-          label="Queue"
-          value={`${state.snapshot.metrics.activeCount} active`}
-          detail={`${state.snapshot.metrics.waitingCount} queued · ${dashboard.counts.paused ?? 0} paused`}
-        />
-        <MetricCard
-          icon={<Network size={16} />}
-          label="Connections"
-          value={String(dashboard.connectionCount)}
-          detail={`${formatSpeed(state.snapshot.metrics.uploadSpeed || dashboard.totalUploadSpeed)} up`}
-        />
-        <MetricCard
-          icon={<AlertTriangle size={16} />}
-          label="Issues"
-          value={String(dashboard.issueCount)}
-          detail={dashboard.issueCount > 0 ? "Needs attention" : "Clean"}
-        />
-      </section>
 
-      <main className="app-workspace">
-        <aside className="sidebar" aria-label="Download navigation">
-          <section className="sidebar-section">
-            <div className="section-heading">
-              <ListFilter size={15} />
-              <span>Queue</span>
-            </div>
-            <div className="filter-list">
-              {filters.map((filter) => {
-                const count = filter.key === "all"
-                  ? state.snapshot.downloads.length
-                  : dashboard.counts[filter.key] ?? 0;
-                return (
-                  <button
-                    key={filter.key}
-                    type="button"
-                    className={`filter-row ${state.filter === filter.key ? "filter-row--active" : ""}`}
-                    onClick={() => appStore.setFilter(filter.key)}
-                  >
-                    <span>{filter.label}</span>
-                    <strong>{count}</strong>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-
-          {directoryOptions.length > 0 && (
-            <section className="sidebar-section">
-              <div className="section-heading">
-                <HardDrive size={15} />
-                <span>Locations</span>
-              </div>
-              <div className="location-list">
-                {directoryOptions.slice(0, 6).map((directory) => (
-                  <button
-                    key={directory}
-                    type="button"
-                    className={`location-row ${quickDirectory === directory ? "location-row--active" : ""}`}
-                    onClick={() => appStore.setQuickDirectory(directory)}
-                    title={directory}
-                  >
-                    <FolderOpen size={14} />
-                    <span>{directory}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <section className="sidebar-section about-panel">
-            <div className="section-heading">
-              <UserRound size={15} />
-              <span>About</span>
-            </div>
-            <p>By Shreyam Adhikari, also known as shreyam1008.</p>
-            <div className="about-links">
-              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://gobarrygo.shreyam1008.com.np/")}>
-                <span>Project site</span>
-              </button>
-              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008/gobarrygo")}>
-                <span>GitHub repo</span>
-              </button>
-              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008")}>
-                <span>@shreyam1008</span>
-              </button>
-              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://shreyam1008.com.np")}>
-                <span>shreyam1008.com.np</span>
-              </button>
-            </div>
-          </section>
-
-          <section className="sidebar-section sidebar-section--metrics">
-            <MetricLine icon={<Clock3 size={15} />} label="ETA" value={formatMetricETA(dashboard.activeETASeconds)} />
-            <MetricLine icon={<Gauge size={15} />} label="Peak" value={formatSpeed(state.peakDownloadSpeed)} />
-            <MetricLine icon={<Network size={15} />} label="Connections" value={String(dashboard.connectionCount)} />
-          </section>
-        </aside>
-
-        <section className="queue-panel" aria-label="Downloads">
-          <div className="queue-toolbar">
-            <div>
-              <h1>Downloads</h1>
-              <p>{dashboard.filteredDownloads.length} shown from {state.snapshot.downloads.length} tracked</p>
-            </div>
-            <div className="queue-toolbar__tools">
-              <label className="search-box">
-                <Search size={16} />
-                <input
-                  ref={searchRef}
-                  type="search"
-                  placeholder="Search files or folders"
-                  value={state.search}
-                  onChange={(event) => appStore.setSearch(event.target.value)}
-                />
-                {state.search ? (
-                  <button type="button" onClick={() => appStore.clearSearch()} aria-label="Clear search" title="Clear search">
-                    <X size={14} />
-                  </button>
-                ) : null}
-              </label>
-              <button type="button" className="tool-button" onClick={() => void appStore.refresh()} title="Refresh">
-                <RefreshCcw size={16} />
-              </button>
-            </div>
-          </div>
-
-          <div className="queue-header" aria-hidden="true">
-            <span>File</span>
-            <span>Progress</span>
-            <span>Transfer</span>
-            <span>Folder</span>
-            <span>Actions</span>
-          </div>
-
-          <VirtualDownloadList
-            downloads={dashboard.filteredDownloads}
-            loading={state.loading}
-            selectedGID={state.selectedGID}
-            onSelect={(gid) => appStore.setSelectedGID(gid)}
-          />
-        </section>
-
-        <InspectorPanel item={selectedDownload} />
+        <InspectorPanel item={selectedDownload} onClose={() => setDetailsOpen(false)} />
       </main>
-
-      <footer className="statusbar">
-        <span>{state.snapshot.downloads.length} tracked</span>
-        <span>{formatSpeed(state.snapshot.metrics.downloadSpeed)} down</span>
-        <span>{formatSpeed(state.snapshot.metrics.uploadSpeed)} up</span>
-        <span>{dashboard.activeBytesRemaining > 0 ? `${formatBytes(dashboard.activeBytesRemaining)} remaining active` : "No active backlog"}</span>
-      </footer>
 
       <AddDownloadDialog
         open={state.addDialogOpen}
@@ -489,147 +179,6 @@ export function App() {
       ) : null}
     </div>
   );
-}
-
-const VirtualDownloadList = memo(function VirtualDownloadList({
-  downloads,
-  loading,
-  selectedGID,
-  onSelect,
-}: {
-  downloads: DownloadItem[];
-  loading: boolean;
-  selectedGID: string | null;
-  onSelect: (gid: string) => void;
-}) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  const [viewport, setViewport] = useState({ height: 520, scrollTop: 0 });
-
-  const measure = useCallback(() => {
-    if (animationFrameRef.current !== null) {
-      return;
-    }
-
-    animationFrameRef.current = window.requestAnimationFrame(() => {
-      animationFrameRef.current = null;
-      const node = viewportRef.current;
-      if (!node) {
-        return;
-      }
-      setViewport({
-        height: node.clientHeight || 520,
-        scrollTop: node.scrollTop,
-      });
-    });
-  }, []);
-
-  const measureNow = useCallback(() => {
-    const node = viewportRef.current;
-    if (!node) {
-      return;
-    }
-    setViewport({
-      height: node.clientHeight || 520,
-      scrollTop: node.scrollTop,
-    });
-  }, []);
-
-  useEffect(() => {
-    measureNow();
-    const node = viewportRef.current;
-    if (!node || typeof ResizeObserver === "undefined") {
-      return;
-    }
-    const observer = new ResizeObserver(measureNow);
-    observer.observe(node);
-    return () => {
-      observer.disconnect();
-      if (animationFrameRef.current !== null) {
-        window.cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
-      }
-    };
-  }, [measureNow]);
-
-  const start = Math.max(0, Math.floor(viewport.scrollTop / rowHeight) - rowOverscan);
-  const visibleCount = Math.ceil(viewport.height / rowHeight) + rowOverscan * 2;
-  const end = Math.min(downloads.length, start + visibleCount);
-  const visibleDownloads = downloads.slice(start, end);
-
-  if (loading) {
-    return (
-      <div className="queue-empty">
-        <SlidersHorizontal size={18} />
-        <span>Starting the download engine.</span>
-      </div>
-    );
-  }
-
-  if (downloads.length === 0) {
-    return (
-      <div className="queue-empty">
-        <Download size={18} />
-        <span>No downloads match this view.</span>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      ref={viewportRef}
-      className="download-list"
-      onScroll={measure}
-      data-rendered={`${visibleDownloads.length}/${downloads.length}`}
-    >
-      <div className="download-list__spacer" style={{ height: downloads.length * rowHeight }}>
-        <div className="download-list__window" style={{ transform: `translateY(${start * rowHeight}px)` }}>
-          {visibleDownloads.map((item) => (
-            <div key={item.gid} className="download-list__slot">
-              <DownloadRow
-                item={item}
-                selected={selectedGID === item.gid}
-                onSelect={onSelect}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-});
-
-function MetricLine({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
-  return (
-    <div className="metric-line">
-      <span>{icon}{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
-
-function MetricCard({
-  icon,
-  label,
-  value,
-  detail,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="metric-line">
-      <span>{icon}{label}</span>
-      <strong>{value}</strong>
-      <small>{detail}</small>
-    </div>
-  );
-}
-
-function formatMetricETA(seconds: number): string {
-  return seconds > 0 ? formatETA(seconds) : "Idle";
 }
 
 function uniqueNonEmpty(values: string[]): string[] {

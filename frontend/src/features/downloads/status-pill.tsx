@@ -5,6 +5,5 @@ type Props = {
 };
 
 export function StatusPill({ status }: Props) {
-  return <span className={`status-pill status-pill--${status || "idle"}`}>{formatStatus(status)}</span>;
+  return <span className={`st st-${status || "idle"}`}>{formatStatus(status)}</span>;
 }
-

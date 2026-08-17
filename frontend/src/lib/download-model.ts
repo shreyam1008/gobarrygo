@@ -80,6 +80,30 @@ export function parseDownloadURLs(text: string): string[] {
   return analyzeDownloadInput(text).urls;
 }
 
+export function getDownloadSourceHost(item: DownloadItem): string {
+  for (const file of item.files) {
+    for (const uri of file.uris) {
+      if (/^magnet:\?/i.test(uri)) {
+        return "BitTorrent";
+      }
+
+      try {
+        const parsed = new URL(uri);
+        if (parsed.hostname) {
+          return parsed.hostname;
+        }
+        if (parsed.protocol) {
+          return parsed.protocol.replace(/:$/, "").toUpperCase();
+        }
+      } catch {
+        // aria2 can briefly report partial URI metadata while a download starts.
+      }
+    }
+  }
+
+  return "Source pending";
+}
+
 function normalizeCandidateToken(value: string): string {
   return value
     .trim()

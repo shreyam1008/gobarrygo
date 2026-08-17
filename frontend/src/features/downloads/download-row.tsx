@@ -1,9 +1,10 @@
 import { memo, type KeyboardEvent, type ReactNode } from "react";
-import { FileDown, FolderOpen, Pause, Play, RotateCcw, Trash2 } from "lucide-react";
-import type { DownloadItem } from "@/types/contracts";
-import { formatBytes, formatETA, formatPercent, formatSpeed, formatStatus } from "@/lib/format";
+import { File, FileDown, FolderOpen, Globe2, Pause, Play, RotateCcw, Trash2 } from "lucide-react";
 import { StatusPill } from "@/features/downloads/status-pill";
+import { getDownloadSourceHost } from "@/lib/download-model";
+import { formatBytes, formatETA, formatPercent, formatSpeed, formatStatus } from "@/lib/format";
 import { appStore } from "@/lib/store/app-store";
+import type { DownloadItem } from "@/types/contracts";
 
 type Props = {
   item: DownloadItem;
@@ -17,8 +18,12 @@ export const DownloadRow = memo(function DownloadRow({ item, selected, onSelect 
   const canRetry = item.status === "error" || item.status === "removed";
   const canOpen = item.status === "complete";
   const progress = Math.max(0, Math.min(item.progress, 100));
+  const sourceHost = getDownloadSourceHost(item);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       onSelect(item.gid);
@@ -27,8 +32,11 @@ export const DownloadRow = memo(function DownloadRow({ item, selected, onSelect 
 
   return (
     <article
-      className={`download-row ${selected ? "download-row--selected" : ""}`}
-      aria-selected={selected}
+      className={`dl-row ${selected ? "dl-selected" : ""}`}
+      data-st={item.status}
+      data-download-gid={item.gid}
+      role="listitem"
+      aria-current={selected ? "true" : undefined}
       tabIndex={0}
       onClick={() => onSelect(item.gid)}
       onDoubleClick={() => {
@@ -38,63 +46,69 @@ export const DownloadRow = memo(function DownloadRow({ item, selected, onSelect 
       }}
       onKeyDown={handleKeyDown}
     >
-      <div className="download-row__file">
-        <div className="download-row__title-line">
+      <div className="col-file dl-file">
+        <File className="dl-icon" size={18} aria-hidden="true" />
+        <div>
           <strong title={item.name}>{item.name || "Unnamed download"}</strong>
-          <StatusPill status={item.status} />
+          <span className="dl-meta">
+            <span className="c-source">{sourceHost} · </span>
+            {item.connections} connection{item.connections === 1 ? "" : "s"}
+            <span className="c-transfer"> · {formatSpeed(item.downloadSpeed)} · {formatRowETA(item)}</span>
+          </span>
         </div>
-        <span className="download-row__subtle">{formatStatus(item.status)} · {item.connections} connections</span>
+        <span className="c-st"><StatusPill status={item.status} /></span>
       </div>
 
-      <div className="download-row__progress-cell">
+      <div className="col-source dl-source" title={sourceHost}>
+        <Globe2 size={14} aria-hidden="true" />
+        <span>{sourceHost}</span>
+      </div>
+
+      <div className="col-progress dl-progress-cell">
         <div
-          className="download-row__progress"
+          className="progress"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(progress)}
           aria-label={`${item.name} progress`}
         >
-          <span style={{ transform: `scaleX(${Math.max(progress, 0.8) / 100})` }} />
+          <span style={{ transform: `scaleX(${progress / 100})` }} />
         </div>
-        <div className="download-row__progress-meta">
+        <div className="progress-meta">
           <strong>{formatPercent(progress)}</strong>
-          <span>{formatBytes(item.completedLength)} / {formatBytes(item.totalLength)}</span>
+          <span className="c-size">{formatBytes(item.completedLength)} / {formatBytes(item.totalLength)}</span>
         </div>
       </div>
 
-      <div className="download-row__transfer">
-        <strong>{formatSpeed(item.downloadSpeed)}</strong>
-        <span>{formatRowETA(item)}</span>
-      </div>
+      <strong className="col-speed dl-speed">{formatSpeed(item.downloadSpeed)}</strong>
+      <span className="col-eta dl-eta">{formatRowETA(item)}</span>
+      <span className="col-size dl-size">{formatBytes(item.completedLength)} / {formatBytes(item.totalLength)}</span>
+      <span className="col-st dl-st"><StatusPill status={item.status} /></span>
 
-      <div className="download-row__folder" title={item.directory}>
-        {item.directory}
-      </div>
-
-      <div className="download-row__actions">
+      <div className="col-actions dl-actions">
         {canPause ? (
           <ActionIcon label="Pause" onClick={() => appStore.pauseDownload(item.gid)}>
-            <Pause size={15} />
+            <Pause size={14} />
           </ActionIcon>
         ) : null}
         {canResume ? (
           <ActionIcon label="Resume" onClick={() => appStore.resumeDownload(item.gid)}>
-            <Play size={15} />
+            <Play size={14} />
           </ActionIcon>
         ) : null}
         {canRetry ? (
           <ActionIcon label="Retry" onClick={() => appStore.retryDownload(item.gid)}>
-            <RotateCcw size={15} />
+            <RotateCcw size={14} />
           </ActionIcon>
         ) : null}
         {canOpen ? (
           <>
             <ActionIcon label="Open file" onClick={() => appStore.openDownloadedFile(item.gid)}>
-              <FileDown size={15} />
+              <FileDown size={14} />
             </ActionIcon>
             <ActionIcon label="Show folder" onClick={() => appStore.openDownloadFolder(item.gid)}>
-              <FolderOpen size={15} />
+              <FolderOpen size={14} />
             </ActionIcon>
           </>
         ) : null}
@@ -102,28 +116,30 @@ export const DownloadRow = memo(function DownloadRow({ item, selected, onSelect 
           label="Remove from list"
           onClick={() => {
             if (window.confirm(`Remove "${item.name}" from the list? Files remain on disk.`)) {
-              void appStore.removeDownload(item.gid, false);
+              return appStore.removeDownload(item.gid, false);
             }
           }}
         >
-          <Trash2 size={15} />
+          <Trash2 size={14} />
         </ActionIcon>
       </div>
     </article>
   );
 });
 
-type ActionIconProps = {
+function ActionIcon({
+  label,
+  onClick,
+  children,
+}: {
   label: string;
-  onClick: () => void;
+  onClick: () => void | Promise<void>;
   children: ReactNode;
-};
-
-function ActionIcon({ label, onClick, children }: ActionIconProps) {
+}) {
   return (
     <button
       type="button"
-      className="icon-button"
+      className="icon row-action"
       aria-label={label}
       title={label}
       onClick={(event) => {
@@ -147,10 +163,10 @@ function formatRowETA(item: DownloadItem): string {
     return "Queued";
   }
   if (item.status === "error") {
-    return "Needs attention";
+    return "Attention";
   }
   if (item.status === "removed") {
     return "Removed";
   }
-  return formatETA(item.etaSeconds);
+  return item.etaSeconds > 0 ? formatETA(item.etaSeconds) : formatStatus(item.status);
 }
