@@ -50,8 +50,10 @@ jobs:
       - name: Build with Astro
         working-directory: site
         env:
-          PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}
-          PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # GitHub may report http:// while the custom-domain certificate is
+          # provisioning. Canonical URLs must never inherit that transient URL.
+          PUBLIC_SITE_URL: https://gobarrygo.shreyam1008.com.np
+          PUBLIC_BASE_PATH: /
         run: |
           bun run verify
           touch dist/.nojekyll
