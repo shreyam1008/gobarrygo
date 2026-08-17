@@ -53,11 +53,18 @@ explicit:
   Wails bindings remain an adapter at the edge.
 - Local records are versioned and exportable. No account, telemetry, or cloud sync is
   required for a module to function.
+- The workflow runner is headless-capable but GUI-first in product design: the GUI
+  authors and observes runs, while the same plain-Go executor can run an exported
+  definition from a desktop or service host.
+- Resource limits belong to the runner boundary, not only the React UI. Worker caps,
+  memory/CPU admission, disk reserves, cancellation, and child-process containment
+  must remain enforceable when no window is open.
 
 The first likely addition is a File Workspace for downloaded outputs, followed by
 previewable Batch Tools. A workflow layer comes later, after job history and recovery
-are proven. See [the product roadmap](product-roadmap.md) for the sequencing and
-release gates.
+are proven. Its GUI-to-headless execution contract, resource governor, and service
+targets are documented in [Workflows](workflows.md). See [the product roadmap](product-roadmap.md)
+for the sequencing and release gates.
 
 ## State Flow
 

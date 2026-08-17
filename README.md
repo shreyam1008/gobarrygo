@@ -24,7 +24,7 @@ This is the shipped `0.0.9` surface. It owns URL intake, parallel transfer, resu
 
 1. **File workspace** — safe staging, rename/move, checksum verification, and clear post-download handoff.
 2. **Batch tools** — previewable batch rename, copy, archive, and inspection jobs with conservative defaults.
-3. **Workflows** — scheduling and small automations after job history, recovery, and module boundaries are proven.
+3. **Workflows** — GUI-authored sequences with timers, bounded resources, readable script export, and later desktop/server service runs.
 
 These are roadmap items, not current release features. See [the detailed product roadmap](docs/product-roadmap.md) for scope, sequencing, and acceptance gates.
 
@@ -156,5 +156,6 @@ Not fully verified locally:
 - [Domain and release contract](docs/domain-release.md)
 - [Distribution status](docs/distribution-log.md)
 - [Product roadmap](docs/product-roadmap.md)
+- [Workflow design](docs/workflows.md)
 - [Changelog](CHANGELOG.md)
 - [Third Party Notices](THIRD_PARTY_NOTICES.md)

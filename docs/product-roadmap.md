@@ -125,6 +125,9 @@ Initial scope:
 Not in the first slice: a general visual programming language, cloud sync, or a
 marketplace of untrusted plugins.
 
+The detailed execution, resource-governor, generated-script, and Windows Server
+plan lives in [Workflows](workflows.md).
+
 ## Native shell contract
 
 The current UI is downloader-first. When the second module begins, introduce the
@@ -166,4 +169,6 @@ Every new module must satisfy all of these before it is called shipped:
   account/cloud dependency, and preserve inspectable local jobs.
 - **2026-08-17 — Staged expansion:** file work, batch tools, and workflows are
   planned but remain clearly marked as future work until their gates pass.
-
+- **2026-08-17 — GUI-first, headless-capable:** the GUI is the authoring and
+  observability surface; a shared Go runner can execute exported workflows on a
+  desktop or server without making the product CLI-first.
