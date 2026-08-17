@@ -5,14 +5,16 @@ const latestDl = repoUrl + "/releases/latest/download";
 const authorUrl = "https://shreyam1008.com.np";
 const siteTitle = "GoBarryGo - Ultra-light Aria2c Desktop Controller";
 const siteDescription = "A blazing-fast, ultra-lightweight desktop download manager powered by aria2c. Built with Go + React 19 by Shreyam Adhikari. Under 30 MB RAM, cross-platform. Free and open source.";
-const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
+const baseUrl = import.meta.env.BASE_URL;
+const siteUrl = new URL(baseUrl, Astro.site).toString();
+const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/gobarrygo/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={faviconUrl} />
     <link rel="canonical" href={siteUrl} />
     <meta name="generator" content={Astro.generator} />
 
@@ -32,10 +34,10 @@ const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
     <meta property="og:site_name" content="GoBarryGo" />
     <meta property="og:locale" content="en_US" />
 
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={siteUrl} />
-    <meta property="twitter:title" content={siteTitle} />
-    <meta property="twitter:description" content={siteDescription} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={siteUrl} />
+    <meta name="twitter:title" content={siteTitle} />
+    <meta name="twitter:description" content={siteDescription} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -363,7 +365,7 @@ const siteUrl = "https://shreyam1008.github.io/gobarrygo/";
 
     <nav>
       <div class="nav-inner">
-        <a href="/gobarrygo/" class="nav-brand">GoBarryGo</a>
+        <a href={baseUrl} class="nav-brand">GoBarryGo</a>
         <div class="nav-links">
           <a href="#download">Download</a>
           <a href="#features">Features</a>

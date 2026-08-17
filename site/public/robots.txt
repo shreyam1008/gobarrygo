@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://shreyam1008.github.io/gobarrygo/sitemap.xml

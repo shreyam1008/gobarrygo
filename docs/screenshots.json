@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "screenshots": [],
+  "status": "planned",
+  "nextAction": "Capture the current v0.0.9 desktop UI on each supported platform, without private download URLs or file paths, before submitting store metadata that requires screenshots."
+}
