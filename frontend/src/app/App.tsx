@@ -382,7 +382,7 @@ export function App() {
             </div>
             <p>By Shreyam Adhikari, also known as shreyam1008.</p>
             <div className="about-links">
-              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://shreyam1008.github.io/gobarrygo/")}>
+              <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://gobarrygo.shreyam1008.com.np/")}>
                 <span>Project site</span>
               </button>
               <button type="button" className="location-row" onClick={() => void appStore.openWebsite("https://github.com/shreyam1008/gobarrygo")}>

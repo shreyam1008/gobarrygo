@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "slug": "gobarrygo",
+  "name": "GoBarryGo",
+  "summary": "A lightweight desktop download manager that controls a local aria2c process through JSON-RPC.",
+  "visibility": "public",
+  "portfolioApproved": true,
+  "lifecycle": "released",
+  "repository": "https://github.com/shreyam1008/gobarrygo",
+  "canonicalUrl": "https://gobarrygo.shreyam1008.com.np/",
+  "creatorUrl": "https://shreyam1008.com.np/me",
+  "versionSource": "frontend/package.json",
+  "verifyCommand": "task lint test && (cd frontend && bun run build && bun run budget) && (cd site && bun install --frozen-lockfile && bun run verify)",
+  "changelog": "CHANGELOG.md",
+  "securityPolicy": "SECURITY.md",
+  "installDocs": "docs/INSTALLING.md",
+  "rollbackDocs": "docs/INSTALLING.md",
+  "screenshotManifest": "docs/screenshots.json",
+  "distributions": [
+    {
+      "channel": "Product website",
+      "status": "prepared",
+      "url": "https://gobarrygo.shreyam1008.com.np/",
+      "version": "0.0.9"
+    },
+    {
+      "channel": "GitHub Releases",
+      "status": "live",
+      "url": "https://github.com/shreyam1008/gobarrygo/releases/tag/v0.0.9",
+      "version": "0.0.9",
+      "verifiedAt": "2026-08-17"
+    },
+    {
+      "channel": "WinGet",
+      "status": "prepared",
+      "version": "0.0.9"
+    },
+    {
+      "channel": "Snap Store",
+      "status": "prepared",
+      "version": "0.0.9"
+    },
+    {
+      "channel": "Flathub",
+      "status": "prepared",
+      "version": "0.0.9"
+    }
+  ]
+}

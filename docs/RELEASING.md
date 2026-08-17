@@ -2,7 +2,7 @@
 
 ## Versioning
 
-- Current line: `0.0.6`
+- Current line: `0.0.9`
 - Current codename: `CHITRA`
 
 The version string is kept in:
@@ -30,7 +30,7 @@ The version string is kept in:
 3. Tag the release with a semantic version, for example:
 
 ```bash
-git tag v0.0.6
+git tag v0.0.9
 git push origin main --tags
 ```
 
@@ -53,4 +53,3 @@ The current repository automation produces unsigned public artifacts by default.
 - macOS `.app` bundles are ad-hoc signed when built on macOS runners.
 
 Introduce platform certificates later without changing the application architecture.
-

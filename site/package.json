@@ -2,10 +2,13 @@
   "name": "gobarrygo-site",
   "private": true,
   "version": "0.0.9",
+  "homepage": "https://gobarrygo.shreyam1008.com.np/",
+  "repository": "github:shreyam1008/gobarrygo",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build"
+    "build": "astro build",
+    "verify": "bun run build && node scripts/verify-build.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0"

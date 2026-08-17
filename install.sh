@@ -187,7 +187,11 @@ detect_target() {
 
 	case "$arch_raw" in
 	x86_64 | amd64) ARCH="amd64" ;;
-	aarch64 | arm64) ARCH="arm64" ;;
+	aarch64 | arm64)
+		err "GoBarryGo releases do not currently include arm64 installers."
+		err "Build from source instead: https://github.com/${REPO}#development"
+		exit 1
+		;;
 	*)
 		err "Unsupported architecture: $arch_raw"
 		exit 1
@@ -263,6 +267,13 @@ install_binary() {
 	local src_file="$1"
 	local target_name="$2"
 
+	if [[ "$OS" == "windows" ]]; then
+		# The release asset is an NSIS installer, not a portable application.
+		# Run it and let NSIS own shortcuts, uninstall metadata, and its target path.
+		"$src_file"
+		return
+	fi
+
 	if [[ "$OS" == "macos" ]]; then
 		# Extract ZIP to Applications
 		if [[ "$USE_SUDO" -eq 1 ]]; then
@@ -279,6 +290,37 @@ install_binary() {
 	else
 		mkdir -p "$INSTALL_DIR"
 		install -m 0755 "$src_file" "$INSTALL_DIR/$target_name"
+	fi
+}
+
+verify_checksum() {
+	local artifact="$1"
+	local checksum_file="$2"
+	local asset_name="$3"
+	local expected actual
+
+	expected="$(awk -v asset="$asset_name" '$2 == asset { print $1 }' "$checksum_file")"
+	if [[ ! "$expected" =~ ^[0-9a-fA-F]{64}$ ]]; then
+		err "No valid checksum found for ${asset_name}."
+		return 1
+	fi
+
+	if command -v sha256sum >/dev/null 2>&1; then
+		actual="$(sha256sum "$artifact" | awk '{print $1}')"
+	elif command -v shasum >/dev/null 2>&1; then
+		actual="$(shasum -a 256 "$artifact" | awk '{print $1}')"
+	elif command -v openssl >/dev/null 2>&1; then
+		actual="$(openssl dgst -sha256 "$artifact" | awk '{print $NF}')"
+	else
+		err "A SHA-256 tool is required (sha256sum, shasum, or openssl)."
+		return 1
+	fi
+
+	actual="$(printf '%s' "$actual" | tr '[:upper:]' '[:lower:]')"
+	expected="$(printf '%s' "$expected" | tr '[:upper:]' '[:lower:]')"
+	if [[ "$actual" != "$expected" ]]; then
+		err "Checksum verification failed for ${asset_name}."
+		return 1
 	fi
 }
 
@@ -301,15 +343,14 @@ print_quick_guide() {
 		echo "  GoBarryGo has been installed to your Applications folder."
 		echo "  You can open it from Launchpad."
 	elif [[ "$OS" == "windows" ]]; then
-		echo "  ${command_hint}                Launch GoBarryGo"
-		echo "  You may also find the installer in your Downloads folder to create shortcuts."
+		echo "  Open GoBarryGo from the Start menu or the shortcut created by the installer."
 	else
 		echo "  ${command_hint}                Launch GoBarryGo AppImage"
 	fi
 }
 
 main() {
-	local asset_name target_name base_url tmp_bin command_hint
+	local asset_name target_name base_url tmp_bin checksum_file command_hint
 
 	if [[ -t 1 ]]; then
 		IS_TTY=1
@@ -364,13 +405,14 @@ main() {
 
 	print_step 3 "Downloading binary"
 	run_step "Downloading ${asset_name}" download_file "${base_url}/${asset_name}" "$tmp_bin"
+	checksum_file="${TMP_DIR}/checksums.txt"
+	run_step "Downloading checksums.txt" download_file "${base_url}/checksums.txt" "$checksum_file"
 
 	print_step 4 "Preparing installer"
+	run_step "Verifying SHA-256 checksum" verify_checksum "$tmp_bin" "$checksum_file" "$asset_name"
     if [[ "$OS" == "linux" ]]; then
 	    chmod +x "$tmp_bin"
         echo -e "  - Marked AppImage as ${GREEN}executable${NC}"
-    else
-        echo -e "  - Download ${GREEN}verified${NC}"
     fi
 
 	print_step 5 "Installing application"
@@ -383,7 +425,9 @@ main() {
 	print_step 6 "Final validation"
     echo -e "  - Installation ${GREEN}successful${NC}"
     
-	add_path_hint
+	if [[ "$OS" != "windows" ]]; then
+		add_path_hint
+	fi
 
 	command_hint="$BINARY_NAME"
 	if ! path_contains "$INSTALL_DIR"; then

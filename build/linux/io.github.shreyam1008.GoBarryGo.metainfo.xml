@@ -22,7 +22,7 @@
     <p>Requires aria2c to be installed on the system.</p>
   </description>
   <launchable type="desktop-id">io.github.shreyam1008.GoBarryGo.desktop</launchable>
-  <url type="homepage">https://shreyam1008.github.io/gobarrygo/</url>
+  <url type="homepage">https://gobarrygo.shreyam1008.com.np/</url>
   <url type="bugtracker">https://github.com/shreyam1008/gobarrygo/issues</url>
   <url type="vcs-browser">https://github.com/shreyam1008/gobarrygo</url>
   <categories>
@@ -52,10 +52,4 @@
       </description>
     </release>
   </releases>
-  <screenshots>
-    <screenshot type="default">
-      <caption>Download manager main view</caption>
-      <image>https://shreyam1008.github.io/gobarrygo/screenshot-1.png</image>
-    </screenshot>
-  </screenshots>
 </component>

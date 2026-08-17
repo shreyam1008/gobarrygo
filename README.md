@@ -52,6 +52,8 @@ Linux build prerequisites:
 
 ## Quick Install
 
+See [installation, uninstall, and rollback instructions](docs/INSTALLING.md) for pinned versions and platform-specific removal.
+
 Download a pre-built binary on Linux, macOS, or Windows (Git Bash):
 
 ```bash
@@ -60,7 +62,7 @@ curl -fsSL https://raw.githubusercontent.com/shreyam1008/gobarrygo/main/install.
 
 No Go toolchain, Node.js, or complex dependencies required.
 
-**Website**: [https://shreyam1008.github.io/gobarrygo/](https://shreyam1008.github.io/gobarrygo/)
+**Website**: [https://gobarrygo.shreyam1008.com.np/](https://gobarrygo.shreyam1008.com.np/)
 
 ## Development Setup
 
@@ -131,5 +133,7 @@ Not fully verified locally:
 - [Architecture](docs/ARCHITECTURE.md)
 - [Building](docs/BUILDING.md)
 - [Releasing](docs/RELEASING.md)
+- [Domain and release contract](docs/domain-release.md)
+- [Distribution status](docs/distribution-log.md)
 - [Changelog](CHANGELOG.md)
 - [Third Party Notices](THIRD_PARTY_NOTICES.md)
