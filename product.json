@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "slug": "gobarrygo",
   "name": "GoBarryGo",
-  "summary": "A lightweight desktop download manager that controls a local aria2c process through JSON-RPC.",
+  "summary": "A low-overhead native general-work suite, starting with a local aria2c downloader controlled through JSON-RPC.",
   "visibility": "public",
   "portfolioApproved": true,
   "lifecycle": "released",
@@ -19,9 +19,10 @@
   "distributions": [
     {
       "channel": "Product website",
-      "status": "prepared",
+      "status": "live",
       "url": "https://gobarrygo.shreyam1008.com.np/",
-      "version": "0.0.9"
+      "version": "0.0.9",
+      "verifiedAt": "2026-08-17"
     },
     {
       "channel": "GitHub Releases",

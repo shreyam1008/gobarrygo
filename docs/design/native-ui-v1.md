@@ -9,9 +9,14 @@ References:
 
 ## Product intent
 
-GoBarryGo is a small native control surface for `aria2c`. The redesign should make the
-queue faster to scan without adding cloud accounts, telemetry, generic analytics, or
-features that duplicate `aria2c` without improving its desktop use.
+GoBarryGo is a small native work shell whose first complete module is a focused
+control surface for `aria2c`. The redesign should make the queue faster to scan and
+leave room for later local-first work modules without adding cloud accounts,
+telemetry, generic analytics, or features that duplicate `aria2c` without improving
+its desktop use.
+
+The downloader remains the quality bar: every future module must be as inspectable,
+low-overhead, and focused as this workspace.
 
 ## Visual system
 

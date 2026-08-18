@@ -1,6 +1,8 @@
 # GoBarryGo
 
-GoBarryGo is a lightweight native desktop download manager for `aria2c`, built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.9` is codename `CHITRA`.
+GoBarryGo is a low-overhead native general-work suite, starting with a focused desktop downloader for `aria2c`. It is built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.9` is codename `CHITRA`.
+
+The product direction is deliberately staged: make the downloader excellent first, then add small local-first work modules inside the same native shell. The suite is not claiming those future modules are shipped yet.
 
 ## What It Does
 
@@ -9,6 +11,22 @@ GoBarryGo is a lightweight native desktop download manager for `aria2c`, built f
 - Persists preferences for download folder, parallelism, splitting, allocation strategy, and notifications.
 - Ships cross-platform packaging for Linux, Windows, and macOS through GitHub Actions.
 - Keeps the frontend bundle small and the app architecture thin by treating Wails as transport and packaging glue instead of the application core.
+
+## Product Direction
+
+GoBarryGo should feel like one dependable native workspace rather than a pile of unrelated utilities. Every module must be useful on its own, share the same job/history/safety language, and remain local-first by default.
+
+### Current module: Downloader / Inbox
+
+This is the shipped `0.0.9` surface. It owns URL intake, parallel transfer, resume/retry, queue state, engine health, file inspection, and the handoff from a network job to a local file.
+
+### Planned modules
+
+1. **File workspace** — safe staging, rename/move, checksum verification, and clear post-download handoff.
+2. **Batch tools** — previewable batch rename, copy, archive, and inspection jobs with conservative defaults.
+3. **Workflows** — GUI-authored sequences with timers, bounded resources, readable script export, and later desktop/server service runs.
+
+These are roadmap items, not current release features. See [the detailed product roadmap](docs/product-roadmap.md) for scope, sequencing, and acceptance gates.
 
 ## Product Decisions
 
@@ -35,6 +53,8 @@ GoBarryGo is a lightweight native desktop download manager for `aria2c`, built f
   - continue and resume behavior
   - auto rename behavior
   - completion and failure notifications
+
+The downloader is intentionally the first complete module. New capabilities should earn a place by making a repeatable work task faster, safer, or easier to inspect; general-purpose features are not added merely to make the product sound broad.
 
 ## Requirements
 
@@ -135,5 +155,7 @@ Not fully verified locally:
 - [Releasing](docs/RELEASING.md)
 - [Domain and release contract](docs/domain-release.md)
 - [Distribution status](docs/distribution-log.md)
+- [Product roadmap](docs/product-roadmap.md)
+- [Workflow design](docs/workflows.md)
 - [Changelog](CHANGELOG.md)
 - [Third Party Notices](THIRD_PARTY_NOTICES.md)
