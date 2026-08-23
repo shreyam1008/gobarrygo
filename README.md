@@ -12,6 +12,18 @@ The product direction is deliberately staged: make the downloader excellent firs
 - Ships cross-platform packaging for Linux, Windows, and macOS through GitHub Actions.
 - Keeps the frontend bundle small and the app architecture thin by treating Wails as transport and packaging glue instead of the application core.
 
+## Current Desktop UI
+
+These captures come from the published `v0.0.9` Linux binary using an isolated configuration and a generated local test download.
+
+| Ready | Active download |
+| --- | --- |
+| ![GoBarryGo ready with aria2c healthy and no downloads tracked](docs/screenshots/gobarrygo-v0.0.9-linux-ready.png) | ![GoBarryGo transferring a generated test file through four active connections](docs/screenshots/gobarrygo-v0.0.9-linux-active-download.png) |
+
+| Completed download | Preferences and resource limits |
+| --- | --- |
+| ![GoBarryGo completed-download state with the generated test file selected](docs/screenshots/gobarrygo-v0.0.9-linux-completed-download.png) | ![GoBarryGo Preferences showing resource limits and transfer controls](docs/screenshots/gobarrygo-v0.0.9-linux-preferences.png) |
+
 ## Product Direction
 
 GoBarryGo should feel like one dependable native workspace rather than a pile of unrelated utilities. Every module must be useful on its own, share the same job/history/safety language, and remain local-first by default.
