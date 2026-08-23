@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "slug": "gobarrygo",
   "name": "GoBarryGo",
-  "summary": "A low-overhead native general-work suite, starting with a local aria2c downloader controlled through JSON-RPC.",
+  "summary": "The preserved standalone GoBarryGo aria2c downloader; continued transfer development moves into ProtoPeek Downloader.",
   "visibility": "public",
   "portfolioApproved": true,
-  "lifecycle": "released",
+  "lifecycle": "deprecated",
   "repository": "https://github.com/shreyam1008/gobarrygo",
   "canonicalUrl": "https://gobarrygo.shreyam1008.com.np/",
   "creatorUrl": "https://shreyam1008.com.np/me",
@@ -33,17 +33,17 @@
     },
     {
       "channel": "WinGet",
-      "status": "prepared",
+      "status": "paused",
       "version": "0.0.9"
     },
     {
       "channel": "Snap Store",
-      "status": "prepared",
+      "status": "paused",
       "version": "0.0.9"
     },
     {
       "channel": "Flathub",
-      "status": "prepared",
+      "status": "paused",
       "version": "0.0.9"
     }
   ]

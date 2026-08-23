@@ -1,13 +1,77 @@
 ---
 const repoUrl = "https://github.com/shreyam1008/gobarrygo";
-const dlBase = repoUrl + "/releases/download/v0.0.9";
-const latestDl = repoUrl + "/releases/latest/download";
-const authorUrl = "https://shreyam1008.com.np";
-const siteTitle = "GoBarryGo — Native work tools, downloader first";
-const siteDescription = "GoBarryGo is a low-overhead native general-work suite, starting with a fast, local-first aria2c downloader. Built with Go and React by Shreyam Adhikari.";
+const legacyVersion = "v0.0.9";
+const legacyReleaseUrl = `${repoUrl}/releases/tag/${legacyVersion}`;
+const legacyDownloadBase = `${repoUrl}/releases/download/${legacyVersion}`;
+const protoPeekUrl = "https://protopeek.shreyam1008.com.np/downloader/";
+const migrationGuideUrl = `${repoUrl}/blob/main/docs/migrating-to-protopeek.md`;
+const canonicalMigrationGuideUrl =
+  "https://github.com/shreyam1008/ProtoPeek/blob/master/guides/gobarrygo-consolidation.md";
+const authorUrl = "https://shreyam1008.com.np/";
+const siteTitle = "GoBarryGo has moved to ProtoPeek Downloader";
+const siteDescription =
+  "GoBarryGo's continued development has moved into ProtoPeek v0.5 Downloader. Standalone v0.0.9 downloads, checksums, source, and migration help remain available.";
 const baseUrl = import.meta.env.BASE_URL;
 const siteUrl = new URL(baseUrl, Astro.site).toString();
 const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
+
+const legacyDownloads = [
+  { platform: "Linux", label: "Debian / Ubuntu package", file: "gobarrygo.deb", size: "10 MB" },
+  { platform: "Linux", label: "Fedora / RHEL package", file: "gobarrygo.rpm", size: "10 MB" },
+  { platform: "Linux", label: "AppImage", file: "gobarrygo-amd64.AppImage", size: "82 MB" },
+  { platform: "Linux", label: "Standalone binary", file: "gobarrygo-linux-amd64", size: "25 MB" },
+  { platform: "Windows", label: "Installer", file: "gobarrygo-amd64-installer.exe", size: "8.8 MB" },
+  { platform: "Windows", label: "Portable executable", file: "gobarrygo.exe", size: "17 MB" },
+  { platform: "macOS", label: "Application ZIP", file: "gobarrygo-macos.zip", size: "5 MB" },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": siteUrl,
+      url: siteUrl,
+      name: siteTitle,
+      description: siteDescription,
+      about: { "@id": `${siteUrl}#legacy-software` },
+      author: { "@id": `${authorUrl}#person` },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${siteUrl}#legacy-software`,
+      name: "GoBarryGo",
+      alternateName: "GoBarryGo standalone",
+      applicationCategory: "UtilitiesApplication",
+      applicationSubCategory: "Legacy native download manager",
+      operatingSystem: "Linux, macOS, Windows",
+      softwareVersion: "0.0.9",
+      description:
+        "Preserved standalone GoBarryGo release. Continued downloader development is now part of ProtoPeek.",
+      url: siteUrl,
+      downloadUrl: legacyReleaseUrl,
+      codeRepository: repoUrl,
+      license: "https://opensource.org/licenses/MIT",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      isPartOf: {
+        "@type": "SoftwareApplication",
+        name: "ProtoPeek",
+        softwareVersion: "0.5.0",
+        url: protoPeekUrl,
+      },
+      author: { "@id": `${authorUrl}#person` },
+    },
+    {
+      "@type": "Person",
+      "@id": `${authorUrl}#person`,
+      name: "Shreyam Adhikari",
+      alternateName: "shreyam1008",
+      url: authorUrl,
+      sameAs: ["https://github.com/shreyam1008", authorUrl],
+    },
+  ],
+};
 ---
 
 <html lang="en">
@@ -19,13 +83,15 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
     <meta name="generator" content={Astro.generator} />
 
     <title>{siteTitle}</title>
-    <meta name="title" content={siteTitle} />
     <meta name="description" content={siteDescription} />
-    <meta name="keywords" content="download manager, aria2c, native desktop app, general work tools, lightweight, local-first, open source, Linux, Windows, macOS, AppImage, deb, rpm, Go, React, Wails, Shreyam Adhikari, shreyam1008" />
+    <meta
+      name="keywords"
+      content="GoBarryGo, ProtoPeek Downloader, aria2c, download manager, migration, legacy release, Shreyam Adhikari, shreyam1008"
+    />
     <meta name="author" content="Shreyam Adhikari (shreyam1008)" />
     <meta name="robots" content="index, follow" />
     <meta name="google-site-verification" content="nsLMV5dqPB3vxpuq7DPX9iBtRAikKDpxEUJNvMnriTk" />
-    <meta name="theme-color" content="#030712" />
+    <meta name="theme-color" content="#07111f" />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content={siteUrl} />
@@ -34,596 +100,271 @@ const faviconUrl = `${baseUrl}favicon.svg`.replace(/\/{2,}/g, "/");
     <meta property="og:site_name" content="GoBarryGo" />
     <meta property="og:locale" content="en_US" />
 
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:url" content={siteUrl} />
     <meta name="twitter:title" content={siteTitle} />
     <meta name="twitter:description" content={siteDescription} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-    <!-- Structured Data: Software Application -->
-    <script type="application/ld+json">{JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "GoBarryGo",
-      "applicationCategory": "UtilitiesApplication",
-      "applicationSubCategory": "Native general-work suite and download manager",
-      "operatingSystem": "Linux, macOS, Windows",
-      "description": siteDescription,
-      "url": siteUrl,
-      "downloadUrl": repoUrl + "/releases/latest",
-      "softwareVersion": "0.0.9",
-      "license": "https://opensource.org/licenses/MIT",
-      "isAccessibleForFree": true,
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "author": {
-        "@type": "Person",
-        "name": "Shreyam Adhikari",
-        "alternateName": "shreyam1008",
-        "url": "https://shreyam1008.com.np",
-        "sameAs": [
-          "https://github.com/shreyam1008",
-          "https://shreyam1008.com.np"
-        ]
-      },
-      "sourceOrganization": {
-        "@type": "Person",
-        "name": "Shreyam Adhikari",
-        "url": "https://shreyam1008.com.np"
-      },
-      "codeRepository": repoUrl,
-      "programmingLanguage": ["Go", "TypeScript", "React"],
-      "releaseNotes": repoUrl + "/blob/main/CHANGELOG.md"
-    })}</script>
-
-    <!-- Structured Data: Person (Author) -->
-    <script type="application/ld+json">{JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Shreyam Adhikari",
-      "alternateName": "shreyam1008",
-      "url": "https://shreyam1008.com.np",
-      "sameAs": [
-        "https://github.com/shreyam1008",
-        "https://shreyam1008.com.np"
-      ],
-      "knowsAbout": ["Go", "React", "TypeScript", "Open Source", "Desktop Applications", "Systems Programming", "Database Tools"],
-      "makesOffer": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "SoftwareApplication",
-            "name": "GoBarryGo",
-            "url": siteUrl,
-            "description": "Native general-work suite, starting with an ultra-lightweight aria2c downloader"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "SoftwareApplication",
-            "name": "dbterm",
-            "url": "https://github.com/shreyam1008/dbterm",
-            "description": "Terminal-based database client by Shreyam Adhikari"
-          }
-        }
-      ]
-    })}</script>
-
-    <!--
-      GoBarryGo — An open-source project by Shreyam Adhikari (shreyam1008)
-      https://shreyam1008.com.np | https://github.com/shreyam1008
-
-      Shreyam Adhikari is a software engineer specializing in high-performance
-      desktop applications, systems programming in Go, and modern frontend
-      development with React and TypeScript. Known for building lightweight,
-      production-grade open-source tools that prioritize performance, minimal
-      resource usage, and clean architecture.
-
-      Other notable projects by Shreyam Adhikari:
-        - dbterm: A terminal-based database client — https://github.com/shreyam1008/dbterm
-        - GoBarryGo: Native general-work suite, downloader first — https://github.com/shreyam1008/gobarrygo
-
-      Shreyam1008 is an active contributor to the open-source ecosystem,
-      building tools that developers and power users rely on daily.
-      All projects are MIT-licensed and community-driven.
-
-      Contact & links:
-        Website: https://shreyam1008.com.np
-        GitHub: https://github.com/shreyam1008
-    -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
     <style>
       :root {
-        --bg: #030712;
-        --fg: #f3f4f6;
-        --accent: #3b82f6;
-        --accent-glow: rgba(59, 130, 246, 0.4);
-        --teal: #2dd4bf;
-        --amber: #f59e0b;
-        --card-bg: #111827;
-        --card-bg-hover: #1a2332;
-        --border: #1f2937;
-        --border-hover: #374151;
-        --muted: #9ca3af;
-        --radius: 1.25rem;
+        color-scheme: dark;
+        --bg: #07111f;
+        --surface: #0c1a2b;
+        --surface-strong: #11243a;
+        --ink: #f4f7fb;
+        --muted: #a7b4c4;
+        --line: #22364d;
+        --brand: #4fd1c5;
+        --brand-strong: #81e6d9;
+        --blue: #73a8ff;
+        --legacy: #f8d57e;
       }
-      * { box-sizing: border-box; margin: 0; }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
       body {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        background: var(--bg);
-        color: var(--fg);
+        margin: 0;
+        min-width: 320px;
+        background:
+          radial-gradient(circle at 12% -12%, rgba(79, 209, 197, 0.16), transparent 34rem),
+          radial-gradient(circle at 92% 8%, rgba(115, 168, 255, 0.15), transparent 30rem),
+          var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         line-height: 1.6;
-        overflow-x: hidden;
         -webkit-font-smoothing: antialiased;
       }
-      a { color: var(--accent); text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      img { max-width: 100%; height: auto; }
 
-      .hero-glow {
-        position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
-        width: 900px; height: 600px;
-        background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
-        opacity: 0.25; pointer-events: none;
-      }
-      .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+      a { color: var(--brand-strong); text-underline-offset: 0.2em; }
+      a:hover { color: #b7fff6; }
+      code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 
-      /* ── Nav ── */
-      nav {
-        position: sticky; top: 0; z-index: 50;
-        background: rgba(3,7,18,0.85); backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border);
+      .shell { width: min(70rem, calc(100% - 2rem)); margin: 0 auto; }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 4.25rem;
+        border-bottom: 1px solid var(--line);
       }
-      .nav-inner {
-        display: flex; align-items: center; justify-content: space-between;
-        max-width: 960px; margin: 0 auto; padding: 0.85rem 1.5rem;
-      }
-      .nav-brand { font-weight: 800; font-size: 1.1rem; color: var(--fg); text-decoration: none; letter-spacing: -0.03em; }
-      .nav-links { display: flex; gap: 1.25rem; align-items: center; }
-      .nav-links a { color: var(--muted); font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: color 0.15s; }
-      .nav-links a:hover { color: var(--fg); text-decoration: none; }
+      .brand { color: var(--ink); font-weight: 800; letter-spacing: -0.03em; text-decoration: none; }
+      .topbar-links { display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.86rem; }
 
-      /* ── Hero ── */
-      .hero { position: relative; text-align: center; padding: 5rem 1.5rem 3.5rem; }
-      .badge {
-        display: inline-flex; align-items: center; gap: 0.5rem;
-        padding: 0.35rem 0.9rem; border-radius: 999px;
-        background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2);
-        color: #93c5fd; font-size: 0.78rem; font-weight: 500; margin-bottom: 1.25rem;
+      main { padding: 5rem 0 4rem; }
+      .hero { display: grid; gap: 2rem; max-width: 58rem; }
+      .eyebrow {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.7rem;
+        border: 1px solid rgba(248, 213, 126, 0.35);
+        border-radius: 999px;
+        background: rgba(248, 213, 126, 0.08);
+        color: var(--legacy);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
       h1 {
-        font-size: clamp(2.4rem, 7vw, 4rem); font-weight: 800;
-        letter-spacing: -0.04em; line-height: 1.08; margin-bottom: 1rem;
-        background: linear-gradient(to bottom right, #fff 40%, #60a5fa);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        max-width: 15ch;
+        margin: 0;
+        font-size: clamp(2.7rem, 8vw, 6.5rem);
+        line-height: 0.96;
+        letter-spacing: -0.065em;
       }
-      .hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 540px; margin: 0 auto 2rem; line-height: 1.7; }
-      .actions { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+      .lede { max-width: 44rem; margin: 0; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.3rem); }
+      .lede strong { color: var(--ink); }
+      .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+      .button {
+        display: inline-flex;
+        min-height: 2.85rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.7rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 0.7rem;
+        background: var(--surface);
+        color: var(--ink);
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .button:hover { border-color: var(--brand); background: var(--surface-strong); color: var(--ink); }
+      .button-primary { border-color: transparent; background: var(--brand); color: #05221f; }
+      .button-primary:hover { border-color: transparent; background: var(--brand-strong); color: #05221f; }
 
-      /* ── Buttons ── */
-      .btn {
-        display: inline-flex; align-items: center; gap: 0.45rem;
-        padding: 0.7rem 1.4rem; border-radius: 999px;
-        font-weight: 600; font-size: 0.9rem; text-decoration: none;
-        transition: all 0.2s cubic-bezier(0.4,0,0.2,1); border: none; cursor: pointer;
+      .continuity {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        margin-top: 4rem;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        background: var(--line);
       }
-      .btn:hover { text-decoration: none; }
-      .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 16px var(--accent-glow); }
-      .btn-primary:hover { transform: translateY(-2px); background: #2563eb; box-shadow: 0 8px 24px var(--accent-glow); }
-      .btn-ghost { background: rgba(255,255,255,0.06); color: var(--fg); border: 1px solid var(--border); }
-      .btn-ghost:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
-      .btn-sm { padding: 0.55rem 1rem; font-size: 0.82rem; }
+      .continuity article { background: var(--surface); padding: 1.25rem; }
+      .continuity span { color: var(--brand); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+      .continuity h2 { margin: 0.35rem 0; font-size: 1rem; }
+      .continuity p { margin: 0; color: var(--muted); font-size: 0.87rem; }
 
-      /* ── Sections ── */
-      section { padding: 4rem 0; }
-      section + section { border-top: 1px solid var(--border); }
-      .section-label {
-        display: block; text-align: center; font-size: 0.75rem; font-weight: 600;
-        text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.6rem;
-      }
-      h2 { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 0.75rem; letter-spacing: -0.03em; }
-      .section-desc { text-align: center; color: var(--muted); max-width: 560px; margin: 0 auto 2.5rem; font-size: 1rem; }
+      section { padding: 4.5rem 0 0; }
+      .section-head { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(18rem, 1fr); gap: 2rem; align-items: end; }
+      .section-head h2 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.04em; }
+      .section-head p { margin: 0; color: var(--muted); }
 
-      /* ── Download Cards ── */
-      .dl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-      .dl-card {
-        background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
-        padding: 1.5rem; text-align: center; transition: border-color 0.2s, background 0.2s;
-      }
-      .dl-card:hover { border-color: var(--border-hover); background: var(--card-bg-hover); }
-      .dl-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.35rem; color: #fff; }
-      .dl-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
-      .dl-card .dl-links { display: flex; flex-direction: column; gap: 0.4rem; }
-      .dl-link {
-        display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-        padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.8rem; font-weight: 500;
-        background: rgba(255,255,255,0.05); color: var(--fg); text-decoration: none;
-        transition: background 0.15s;
-      }
-      .dl-link:hover { background: rgba(59,130,246,0.15); color: #93c5fd; text-decoration: none; }
-      .dl-link code { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+      .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 2rem; }
+      .step { border-left: 2px solid var(--brand); padding: 0.4rem 1rem 0.6rem; }
+      .step strong { display: block; margin-bottom: 0.35rem; }
+      .step p { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
-      /* ── Install CLI ── */
-      .cli-card {
-        background: linear-gradient(145deg, var(--card-bg), #0d1520);
-        border: 1px solid var(--border); border-radius: 1.25rem; padding: 2rem;
-        max-width: 680px; margin: 0 auto;
+      .downloads { margin-top: 2rem; overflow: hidden; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
+      .download-row {
+        display: grid;
+        grid-template-columns: 7rem minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: center;
+        min-height: 3.5rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid var(--line);
       }
-      .cli-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; }
-      .code-block {
-        background: #000; padding: 0.85rem 1.1rem; border-radius: 0.65rem;
-        font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
-        border: 1px solid var(--border); overflow-x: auto; margin-bottom: 0.75rem; line-height: 1.7;
-      }
-      .code-block .prompt { color: var(--muted); user-select: none; }
-      .code-block .cmd { color: #93c5fd; }
-      .code-block .comment { color: #6b7280; }
-      .cli-note { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+      .download-row:last-child { border-bottom: 0; }
+      .platform { color: var(--muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+      .download-row a { font-weight: 700; text-decoration: none; }
+      .download-row small { color: var(--muted); }
+      .download-meta { color: var(--muted); font-size: 0.82rem; white-space: nowrap; }
+      .release-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
 
-      /* ── Stats ── */
-      .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding: 2.5rem 0; }
-      .stat { text-align: center; }
-      .stat-value {
-        display: block; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em;
-        background: linear-gradient(135deg, var(--accent), var(--teal));
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      .preservation {
+        margin-top: 4.5rem;
+        padding: 1.4rem;
+        border: 1px solid rgba(115, 168, 255, 0.35);
+        border-radius: 1rem;
+        background: rgba(115, 168, 255, 0.07);
       }
-      .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+      .preservation h2 { margin: 0 0 0.45rem; font-size: 1rem; }
+      .preservation p { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
-      /* ── Feature Grid ── */
-      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-      .card {
-        background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
-        padding: 1.5rem; transition: border-color 0.2s, background 0.2s;
-      }
-      .card:hover { border-color: var(--border-hover); background: var(--card-bg-hover); }
-      .card-icon {
-        width: 36px; height: 36px; border-radius: 9px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.1rem; margin-bottom: 0.75rem;
-      }
-      .card-icon--blue { background: rgba(59,130,246,0.15); }
-      .card-icon--teal { background: rgba(45,212,191,0.15); }
-      .card-icon--amber { background: rgba(245,158,11,0.15); }
-      .card-icon--rose { background: rgba(244,63,94,0.15); }
-      .card-icon--violet { background: rgba(139,92,246,0.15); }
-      .card-icon--green { background: rgba(34,197,94,0.15); }
-      .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; color: #fff; }
-      .card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+      footer { display: flex; justify-content: space-between; gap: 1rem; padding: 2rem 0 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.84rem; }
+      footer p { margin: 0; }
 
-      /* ── Product Roadmap ── */
-      .roadmap-list { display: grid; gap: 0.75rem; max-width: 760px; margin: 0 auto; }
-      .roadmap-item {
-        display: grid; grid-template-columns: 135px 1fr; gap: 1rem; align-items: start;
-        padding: 1.15rem 1.25rem; background: var(--card-bg); border: 1px solid var(--border);
-        border-radius: 0.9rem;
-      }
-      .roadmap-item--active { border-color: rgba(45,212,191,0.45); background: linear-gradient(110deg, rgba(45,212,191,0.08), var(--card-bg)); }
-      .roadmap-phase { color: #93c5fd; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-      .roadmap-item h3 { font-size: 0.98rem; font-weight: 600; margin-bottom: 0.25rem; }
-      .roadmap-item p { color: var(--muted); font-size: 0.84rem; line-height: 1.55; }
-
-      /* ── Steps ── */
-      .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; counter-reset: step; }
-      .step { text-align: center; counter-increment: step; }
-      .step::before {
-        content: counter(step);
-        display: flex; align-items: center; justify-content: center;
-        width: 42px; height: 42px; border-radius: 50%;
-        background: rgba(59,130,246,0.12); border: 2px solid rgba(59,130,246,0.3);
-        color: #93c5fd; font-weight: 700; font-size: 1rem; margin: 0 auto 0.75rem;
-      }
-      .step h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
-      .step p { font-size: 0.85rem; color: var(--muted); max-width: 260px; margin: 0 auto; }
-
-      /* ── Config Table ── */
-      .config-wrap {
-        background: linear-gradient(145deg, var(--card-bg), #0d1520);
-        border: 1px solid var(--border); border-radius: 1.25rem; padding: 1.5rem;
-        max-width: 680px; margin: 0 auto; overflow-x: auto;
-      }
-      .config-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-      .config-table th, .config-table td { text-align: left; padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--border); }
-      .config-table th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
-      .config-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #93c5fd; }
-      .config-table td:last-child { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--muted); }
-      .config-table tr:last-child td { border-bottom: none; }
-
-      /* ── Req Grid ── */
-      .req-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-      .req-card {
-        background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
-        padding: 1.5rem; text-align: center;
-      }
-      .req-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
-      .req-card p { font-size: 0.82rem; color: var(--muted); }
-
-      /* ── CTA ── */
-      .cta { text-align: center; padding: 4rem 0; }
-      .cta h2 { margin-bottom: 0.75rem; }
-      .cta p { color: var(--muted); margin-bottom: 1.5rem; font-size: 1rem; }
-
-      /* ── Footer ── */
-      footer {
-        padding: 2.5rem 1.5rem; border-top: 1px solid var(--border);
-        text-align: center; color: var(--muted); font-size: 0.82rem;
-      }
-      footer a { color: var(--fg); font-weight: 600; }
-      footer a:hover { color: var(--accent); text-decoration: none; }
-      .footer-links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.75rem; }
-      .footer-links a { font-weight: 400; font-size: 0.8rem; }
-
-      /* ── Responsive ── */
-      @media (max-width: 640px) {
-        .grid, .steps, .req-grid, .dl-grid { grid-template-columns: 1fr; }
-        .roadmap-item { grid-template-columns: 1fr; gap: 0.35rem; }
-        .stats { grid-template-columns: repeat(2, 1fr); }
-        .hero { padding: 3.5rem 1rem 2.5rem; }
-        .cli-card, .config-wrap { padding: 1.25rem; }
-        .nav-links { gap: 0.75rem; }
-        .nav-links a { font-size: 0.78rem; }
-        .nav-links a[href="#roadmap"] { display: none; }
-        section { padding: 2.5rem 0; }
-        h1 { font-size: 2.2rem; }
-        h2 { font-size: 1.6rem; }
-      }
-      @media (min-width: 641px) and (max-width: 900px) {
-        .grid, .dl-grid { grid-template-columns: repeat(2, 1fr); }
-        .stats { grid-template-columns: repeat(4, 1fr); }
+      @media (max-width: 720px) {
+        main { padding-top: 3.5rem; }
+        .topbar { align-items: flex-start; padding: 1rem 0; }
+        .topbar-links { justify-content: flex-end; }
+        .continuity, .steps, .section-head { grid-template-columns: 1fr; }
+        .download-row { grid-template-columns: 1fr auto; gap: 0.25rem 1rem; }
+        .platform { grid-column: 1 / -1; }
+        footer { flex-direction: column; }
       }
     </style>
   </head>
   <body>
+    <header class="shell topbar">
+      <a class="brand" href={baseUrl}>GoBarryGo</a>
+      <nav class="topbar-links" aria-label="Primary">
+        <a href="#legacy-downloads">Legacy downloads</a>
+        <a href={migrationGuideUrl}>Migration</a>
+        <a href={repoUrl}>Source</a>
+      </nav>
+    </header>
 
-    <nav>
-      <div class="nav-inner">
-        <a href={baseUrl} class="nav-brand">GoBarryGo</a>
-        <div class="nav-links">
-          <a href="#download">Download</a>
-          <a href="#features">Features</a>
-          <a href="#roadmap">Roadmap</a>
-          <a href="#install">Install</a>
-          <a href={repoUrl} target="_blank" rel="noopener">GitHub</a>
-        </div>
-      </div>
-    </nav>
-
-    <div class="hero">
-      <div class="hero-glow"></div>
-      <div class="container">
-        <span class="badge">v0.0.9 CHITRA &mdash; Downloader module</span>
-        <h1>Native work tools.<br>Downloader first.</h1>
-        <p class="hero-sub">
-          GoBarryGo is becoming a low-overhead native suite for everyday work.
-          Today it gives you a focused aria2c downloader: local, fast, and easy to trust.
+    <main class="shell">
+      <div class="hero">
+        <span class="eyebrow">Standalone {legacyVersion} preserved</span>
+        <h1>GoBarryGo moved forward.</h1>
+        <p class="lede">
+          Continued development now lives in <strong>ProtoPeek v0.5 Downloader</strong>: the same
+          local-first transfer direction inside one broader systems workbench. The standalone
+          GoBarryGo release remains available below for anyone who still needs it.
         </p>
         <div class="actions">
-          <a href="#download" class="btn btn-primary">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download for free
-          </a>
-          <a href={repoUrl} class="btn btn-ghost" target="_blank" rel="noopener">
-            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 016.02 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58A12 12 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            Star on GitHub
-          </a>
+          <a class="button button-primary" href={protoPeekUrl}>Open ProtoPeek Downloader</a>
+          <a class="button" href={migrationGuideUrl}>Read the migration guide</a>
         </div>
       </div>
-    </div>
 
-    <div class="container">
-      <div class="stats">
-        <div class="stat"><span class="stat-value">&lt;30 MB</span><span class="stat-label">RAM target</span></div>
-        <div class="stat"><span class="stat-value">~9 MB</span><span class="stat-label">Binary size</span></div>
-        <div class="stat"><span class="stat-value">1</span><span class="stat-label">Shipped module</span></div>
-        <div class="stat"><span class="stat-value">MIT</span><span class="stat-label">Open source</span></div>
+      <div class="continuity" aria-label="What changed and what remains">
+        <article>
+          <span>New home</span>
+          <h2>ProtoPeek Downloader</h2>
+          <p>New transfer features and maintenance continue in ProtoPeek from v0.5 onward.</p>
+        </article>
+        <article>
+          <span>Kept available</span>
+          <h2>GoBarryGo v0.0.9</h2>
+          <p>Installers, checksums, tags, screenshots, source, and release history stay public.</p>
+        </article>
+        <article>
+          <span>Safe bridge</span>
+          <h2>Preview before import</h2>
+          <p>ProtoPeek can preview and copy supported local state without changing GoBarryGo files.</p>
+        </article>
       </div>
-    </div>
 
-    <div class="container">
-      <!-- ── Download Section ── -->
-      <section id="download">
-        <span class="section-label">Download</span>
-        <h2>Start with the downloader</h2>
-        <p class="section-desc">Download v0.0.9 for your system. The first GoBarryGo module is ready today; more native work tools will arrive one useful surface at a time.</p>
-
-        <div class="dl-grid">
-          <div class="dl-card">
-            <h3>Linux</h3>
-            <p>Ubuntu, Debian, Fedora, Arch&hellip;</p>
-            <div class="dl-links">
-              <a href={dlBase + "/gobarrygo.deb"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>.deb</code> (4 MB)</a>
-              <a href={dlBase + "/gobarrygo.rpm"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>.rpm</code> (4 MB)</a>
-              <a href={dlBase + "/gobarrygo-amd64.AppImage"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>AppImage</code> (72 MB)</a>
-              <a href={dlBase + "/gobarrygo-linux-amd64"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>Standalone binary</code> (~10 MB)</a>
-            </div>
-          </div>
-          <div class="dl-card">
-            <h3>Windows</h3>
-            <p>Windows 10+ (64-bit)</p>
-            <div class="dl-links">
-              <a href={dlBase + "/gobarrygo-amd64-installer.exe"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>Installer</code> (6 MB)</a>
-              <a href={dlBase + "/gobarrygo.exe"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>Portable .exe</code> (11 MB)</a>
-            </div>
-          </div>
-          <div class="dl-card">
-            <h3>macOS</h3>
-            <p>macOS 10.15+ (Catalina&plus;)</p>
-            <div class="dl-links">
-              <a href={dlBase + "/gobarrygo-macos.zip"} class="dl-link"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <code>.app ZIP</code> (4 MB)</a>
-            </div>
-          </div>
-        </div>
-
-        <div style="text-align:center; margin-bottom: 1rem;">
-          <a href={dlBase + "/checksums.txt"} class="btn btn-sm btn-ghost">Checksums (SHA-256)</a>
-          <a href={repoUrl + "/releases"} class="btn btn-sm btn-ghost" target="_blank" rel="noopener">All releases</a>
-        </div>
-      </section>
-
-      <!-- ── Install from CLI ── -->
-      <section id="install">
-        <span class="section-label">Command-Line Install</span>
-        <h2>Install from your terminal</h2>
-        <p class="section-desc">Copy-paste and go. Works on Ubuntu, Debian, Fedora, macOS, and Windows (Git Bash).</p>
-
-        <div class="cli-card">
-          <h3>Ubuntu / Debian</h3>
-          <div class="code-block">
-            <span class="comment"># Download and install the .deb package</span><br>
-            <span class="prompt">$</span> <span class="cmd">curl -fsSLO {dlBase}/gobarrygo.deb</span><br>
-            <span class="prompt">$</span> <span class="cmd">sudo dpkg -i gobarrygo.deb</span>
-          </div>
-
-          <h3 style="margin-top: 1.25rem;">Fedora / RHEL</h3>
-          <div class="code-block">
-            <span class="prompt">$</span> <span class="cmd">curl -fsSLO {dlBase}/gobarrygo.rpm</span><br>
-            <span class="prompt">$</span> <span class="cmd">sudo rpm -i gobarrygo.rpm</span>
-          </div>
-
-          <h3 style="margin-top: 1.25rem;">Standalone binary (any distro)</h3>
-          <div class="code-block">
-            <span class="comment"># Single executable — just download and run</span><br>
-            <span class="prompt">$</span> <span class="cmd">curl -fsSLO {dlBase}/gobarrygo-linux-amd64</span><br>
-            <span class="prompt">$</span> <span class="cmd">chmod +x gobarrygo-linux-amd64</span><br>
-            <span class="prompt">$</span> <span class="cmd">./gobarrygo-linux-amd64</span>
-          </div>
-
-          <h3 style="margin-top: 1.25rem;">AppImage (any distro)</h3>
-          <div class="code-block">
-            <span class="prompt">$</span> <span class="cmd">curl -fsSLO {dlBase}/gobarrygo-amd64.AppImage</span><br>
-            <span class="prompt">$</span> <span class="cmd">chmod +x gobarrygo-amd64.AppImage</span><br>
-            <span class="prompt">$</span> <span class="cmd">./gobarrygo-amd64.AppImage</span>
-          </div>
-
-          <p class="cli-note" style="margin-top: 1rem;">
-            <strong>aria2c is bundled</strong> &mdash; release binaries include aria2c so you don't need to install it separately.
-            If you prefer your own copy, GoBarryGo will use the system <code>aria2c</code> from PATH when available.
+      <section aria-labelledby="migration-title">
+        <div class="section-head">
+          <h2 id="migration-title">Move when you are ready.</h2>
+          <p>
+            GoBarryGo does not disappear when you migrate. Stop both apps, preview the known local
+            profile, and apply only after the preview looks right. A guarded rollback remains available.
           </p>
         </div>
-      </section>
-
-      <!-- ── Features ── -->
-      <section id="features">
-        <span class="section-label">Features</span>
-        <h2>Downloads done properly</h2>
-        <p class="section-desc">The first module is a thin, fast control layer over aria2c. Every feature earns its place before the suite grows.</p>
-        <div class="grid">
-          <div class="card">
-            <div class="card-icon card-icon--blue">&#9889;</div>
-            <h3>Parallel splitting</h3>
-            <p>Multi-connection downloads with configurable split count and connections per server.</p>
-          </div>
-          <div class="card">
-            <div class="card-icon card-icon--teal">&#128268;</div>
-            <h3>Auto-resume</h3>
-            <p>Survives crashes, reboots, and network drops. Session recovery picks up where it left off.</p>
-          </div>
-          <div class="card">
-            <div class="card-icon card-icon--amber">&#128737;</div>
-            <h3>Real-time dashboard</h3>
-            <p>Live speed, ETA, progress bars, and per-file inspection for multi-file downloads.</p>
-          </div>
-          <div class="card">
-            <div class="card-icon card-icon--rose">&#128230;</div>
-            <h3>Single binary</h3>
-            <p>AppImage on Linux, .app on macOS, portable .exe on Windows. Drop it anywhere and run.</p>
-          </div>
-          <div class="card">
-            <div class="card-icon card-icon--violet">&#9881;</div>
-            <h3>Full preferences</h3>
-            <p>Tune concurrent downloads, split size, allocation strategy, user-agent, and more from the UI.</p>
-          </div>
-          <div class="card">
-            <div class="card-icon card-icon--green">&#128274;</div>
-            <h3>Privacy first</h3>
-            <p>Zero telemetry, zero tracking, zero cloud. Everything local. Fully open source under MIT.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── Product Roadmap ── -->
-      <section id="roadmap">
-        <span class="section-label">Product direction</span>
-        <h2>One native shell, useful modules</h2>
-        <p class="section-desc">GoBarryGo will grow by finishing one focused workflow at a time. The roadmap is intentionally staged so the app stays light and understandable.</p>
-        <div class="roadmap-list">
-          <div class="roadmap-item roadmap-item--active"><span class="roadmap-phase">Now</span><div><h3>Downloader / Inbox</h3><p>Queue links, split transfers, resume safely, inspect files, and keep the engine healthy without a cloud account.</p></div></div>
-          <div class="roadmap-item"><span class="roadmap-phase">Next</span><div><h3>File workspace</h3><p>Stage downloaded files, rename and move them safely, verify checksums, and make the handoff from network to local work obvious.</p></div></div>
-          <div class="roadmap-item"><span class="roadmap-phase">Then</span><div><h3>Batch tools</h3><p>Handle repeatable local work such as batch rename, copy, archive, and inspect operations with previews and undo-friendly defaults.</p></div></div>
-          <div class="roadmap-item"><span class="roadmap-phase">Later</span><div><h3>Workflows</h3><p>Build sequences in the GUI, set timers and safe resource limits, then export a readable script or run the same bounded workflow as a desktop or server service.</p></div></div>
-        </div>
-      </section>
-
-      <!-- ── How It Works ── -->
-      <section>
-        <span class="section-label">How It Works</span>
-        <h2>Three steps to fast downloads</h2>
-        <p class="section-desc">The downloader module manages aria2c via JSON-RPC — a native GUI without learning CLI flags. The same shell will host future work modules.</p>
         <div class="steps">
-          <div class="step"><h3>Install</h3><p>Download for your OS or use the terminal commands above.</p></div>
-          <div class="step"><h3>Point to aria2c</h3><p>Open Preferences and pick your aria2c binary. The RPC server starts automatically.</p></div>
-          <div class="step"><h3>Paste &amp; go</h3><p>Hit "Add download", paste URLs, and watch parallel splits fill your progress bars.</p></div>
+          <div class="step"><strong>1. Install ProtoPeek v0.5</strong><p>Use the released package and install a system <code>aria2c</code>; ProtoPeek does not bundle it.</p></div>
+          <div class="step"><strong>2. Preview locally</strong><p>Run <code>pp migrate-gobarry</code>. Preview performs no writes.</p></div>
+          <div class="step"><strong>3. Import or roll back</strong><p>Use <code>--apply</code> only after review. The receipt supports a guarded rollback.</p></div>
+        </div>
+        <div class="release-links">
+          <a class="button" href={migrationGuideUrl}>GoBarryGo migration steps</a>
+          <a class="button" href={canonicalMigrationGuideUrl}>ProtoPeek consolidation contract</a>
         </div>
       </section>
 
-      <!-- ── Configuration ── -->
-      <section id="configure">
-        <span class="section-label">Configuration</span>
-        <h2>Tune it to your network</h2>
-        <p class="section-desc">All settings live in the Preferences dialog. Config is a JSON file you can back up or share.</p>
-        <div class="config-wrap">
-          <table class="config-table">
-            <thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead>
-            <tbody>
-              <tr><td>concurrent</td><td>Max parallel downloads</td><td>4</td></tr>
-              <tr><td>split</td><td>Segments per file</td><td>8</td></tr>
-              <tr><td>connections</td><td>Connections per server</td><td>8</td></tr>
-              <tr><td>min-split-size</td><td>Minimum segment size</td><td>4M</td></tr>
-              <tr><td>file-allocation</td><td>Prealloc, falloc, trunc, none</td><td>prealloc</td></tr>
-              <tr><td>continue</td><td>Resume partial downloads</td><td>true</td></tr>
-              <tr><td>auto-rename</td><td>Rename on filename conflicts</td><td>true</td></tr>
-            </tbody>
-          </table>
+      <section id="legacy-downloads" aria-labelledby="legacy-title">
+        <div class="section-head">
+          <h2 id="legacy-title">Legacy standalone downloads.</h2>
+          <p>
+            These are the original {legacyVersion} release assets. Verify the SHA-256 file before
+            installing. They remain compatibility downloads, not the path for new feature work.
+          </p>
+        </div>
+        <div class="downloads">
+          {legacyDownloads.map((download) => (
+            <div class="download-row">
+              <span class="platform">{download.platform}</span>
+              <a href={`${legacyDownloadBase}/${download.file}`}>
+                {download.label}<br /><small>{download.file}</small>
+              </a>
+              <span class="download-meta">{download.size}</span>
+            </div>
+          ))}
+        </div>
+        <div class="release-links">
+          <a class="button" href={`${legacyDownloadBase}/checksums.txt`}>SHA-256 checksums</a>
+          <a class="button" href={legacyReleaseUrl}>v0.0.9 release notes</a>
+          <a class="button" href={`${repoUrl}/releases`}>All GoBarryGo releases</a>
         </div>
       </section>
 
-      <!-- ── Requirements ── -->
-      <section>
-        <span class="section-label">Requirements</span>
-        <h2>What you need</h2>
-        <p class="section-desc">The current downloader is self-contained. The only external engine it needs is aria2c.</p>
-        <div class="req-grid">
-          <div class="req-card"><h3>aria2c</h3><p>Any recent version. GoBarryGo manages the process lifecycle.</p></div>
-          <div class="req-card"><h3>OS</h3><p>Linux (GTK&nbsp;3), macOS&nbsp;10.15+, Windows&nbsp;10+</p></div>
-          <div class="req-card"><h3>Disk</h3><p>~9&nbsp;MB binary. No runtime frameworks needed.</p></div>
-        </div>
-      </section>
+      <aside class="preservation" aria-labelledby="preservation-title">
+        <h2 id="preservation-title">Preservation guarantee</h2>
+        <p>
+          This transition does not delete or rewrite GoBarryGo source, Git history, tags, release
+          binaries, checksums, screenshots, or documentation. The repository remains readable and
+          the {legacyVersion} release remains downloadable independently of ProtoPeek.
+        </p>
+      </aside>
+    </main>
 
-      <!-- ── CTA ── -->
-      <section class="cta">
-        <h2>Start with a lighter workday</h2>
-        <p>Free, open source, and growing from a downloader into a careful native work suite.</p>
-        <div class="actions">
-          <a href="#download" class="btn btn-primary">Download GoBarryGo</a>
-          <a href={repoUrl} class="btn btn-ghost" target="_blank" rel="noopener">View source</a>
-        </div>
-      </section>
-    </div>
-
-    <footer>
-      <p>Built by <a href={authorUrl} target="_blank" rel="noopener">Shreyam Adhikari</a></p>
-      <div class="footer-links">
-        <a href={authorUrl} target="_blank" rel="noopener">shreyam1008.com.np</a>
-        <a href="https://github.com/shreyam1008" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://github.com/shreyam1008/dbterm" target="_blank" rel="noopener">dbterm</a>
-        <a href="#roadmap">Roadmap</a>
-        <a href={repoUrl + "/blob/main/LICENSE"}>MIT License</a>
-      </div>
-      <p style="margin-top: 0.75rem;">&copy; 2026 Shreyam Adhikari</p>
+    <footer class="shell">
+      <p>GoBarryGo and ProtoPeek by <a href={authorUrl}>Shreyam Adhikari</a>.</p>
+      <p><a href={repoUrl}>Preserved source</a> · <a href={legacyReleaseUrl}>Legacy release</a></p>
     </footer>
-
   </body>
 </html>

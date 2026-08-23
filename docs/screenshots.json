@@ -34,5 +34,5 @@
       "captureDate": "2026-08-23"
     }
   ],
-  "nextAction": "After owner review, publish this verified pack with the next approved repository update and reuse it for package-store submissions that require screenshots."
+  "nextAction": "Preserve this verified v0.0.9 evidence pack. Do not reuse it for package-store submissions unless the owner separately re-approves that exact legacy GoBarryGo channel."
 }
