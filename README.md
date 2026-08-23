@@ -1,8 +1,19 @@
 # GoBarryGo
 
-GoBarryGo is a low-overhead native general-work suite, starting with a focused desktop downloader for `aria2c`. It is built from scratch with Go, Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.9` is codename `CHITRA`.
+> **Product transition:** continued downloader development moves into
+> [ProtoPeek v0.5 Downloader](https://protopeek.shreyam1008.com.np/downloader/).
+> GoBarryGo `v0.0.9` remains a preserved, downloadable standalone release; its
+> source, Git history, tags, screenshots, checksums, and release assets are not
+> deleted or rewritten. Read the [migration guide](docs/migrating-to-protopeek.md)
+> before copying any local state.
 
-The product direction is deliberately staged: make the downloader excellent first, then add small local-first work modules inside the same native shell. The suite is not claiming those future modules are shipped yet.
+GoBarryGo is the preserved low-overhead native `aria2c` downloader built with Go,
+Wails v3 alpha, Bun, React 19, and TypeScript. Version `0.0.9` is codename
+`CHITRA`.
+
+The older general-work-suite roadmap is retained below as product history. It is
+not an active GoBarryGo delivery plan; equivalent future work must be evaluated
+inside ProtoPeek's product and safety boundaries.
 
 ## What It Does
 
@@ -24,9 +35,11 @@ These captures come from the published `v0.0.9` Linux binary using an isolated c
 | --- | --- |
 | ![GoBarryGo completed-download state with the generated test file selected](docs/screenshots/gobarrygo-v0.0.9-linux-completed-download.png) | ![GoBarryGo Preferences showing resource limits and transfer controls](docs/screenshots/gobarrygo-v0.0.9-linux-preferences.png) |
 
-## Product Direction
+## Historical Product Direction (Superseded)
 
-GoBarryGo should feel like one dependable native workspace rather than a pile of unrelated utilities. Every module must be useful on its own, share the same job/history/safety language, and remain local-first by default.
+The following direction predates the ProtoPeek consolidation and remains here to
+preserve the design record. Do not interpret its future tense as authorization to
+publish new GoBarryGo modules or package-store submissions.
 
 ### Current module: Downloader / Inbox
 
@@ -167,6 +180,8 @@ Not fully verified locally:
 - [Releasing](docs/RELEASING.md)
 - [Domain and release contract](docs/domain-release.md)
 - [Distribution status](docs/distribution-log.md)
+- [Move to ProtoPeek Downloader](docs/migrating-to-protopeek.md)
+- [Public retirement runbook](docs/retirement-runbook.md)
 - [Product roadmap](docs/product-roadmap.md)
 - [Workflow design](docs/workflows.md)
 - [Changelog](CHANGELOG.md)

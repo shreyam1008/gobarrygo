@@ -1,6 +1,10 @@
 # GoBarryGo workflows
 
-Status: product design and execution contract; not shipped yet.
+Status: **superseded pre-consolidation design; not shipped or active**.
+
+> This document is retained as historical product research. Do not implement or
+> distribute it as a GoBarryGo feature. Any workflow proposal must be
+> re-specified and approved within ProtoPeek's current boundaries.
 
 Workflows are the long-term reason GoBarryGo becomes more than a downloader. A
 workflow is a saved, inspectable sequence of jobs that can be authored in the GUI,
@@ -261,4 +265,3 @@ A workflow release is ready only when:
 7. A failed child step leaves a useful parent-run summary and a resumable state where
    the step permits it.
 8. The workflow format is versioned, validated, and documented before public export.
-

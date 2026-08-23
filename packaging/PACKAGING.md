@@ -1,5 +1,10 @@
 # GoBarryGo — Packaging Guide
 
+> **Frozen legacy preparation:** these manifests and commands are preserved for
+> provenance only. Do not submit or publish GoBarryGo to WinGet, Snap, or
+> Flathub unless the owner separately re-approves that exact legacy channel.
+> ProtoPeek uses its own package identifiers and distribution contracts.
+
 Publisher: Shreyam Adhikari (shreyam1008@gmail.com)
 Version: 0.0.9
 

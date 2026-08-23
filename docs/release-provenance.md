@@ -58,14 +58,16 @@ reproducible byte-for-byte.
 
 ## Preserved local history
 
-These refs are intentionally local and must not be deleted during consolidation:
+These refs are intentionally preserved and must not be deleted during consolidation:
 
 | Ref | Commit | Purpose |
 | --- | --- | --- |
 | `backup/before-date-rewrite-2026-06-18` | `2ae2351a144cf242a0f1f93a6d10e94943403bb1` | Original pre-rewrite lineage containing every Actions build commit in the table above. |
-| `archive/before-date-rewrite-2026-06-18` | `2ae2351a144cf242a0f1f93a6d10e94943403bb1` | Additional explicit local archival branch prepared from the backup ref; not pushed. |
+| `archive/before-date-rewrite-2026-06-18` | `2ae2351a144cf242a0f1f93a6d10e94943403bb1` | Explicit archival branch, published to `origin` and verified again before retirement preparation on 2026-08-24. |
 | `codex/gobarrygo-native-ui` | `c8a23c8b0bc79246bfe0bae58379a32a9dc6b3ef` | Native UI refinement line that must remain discoverable during product consolidation. |
 
-An all-refs Git bundle should include all three refs plus the preservation
-branch before any remote archival or retirement work begins. No tag or release
-should be rewritten from this document alone.
+An all-refs Git bundle containing the preserved refs was created and verified
+before retirement preparation. Its SHA-256 digest is
+`f070678a5b72d135ad8e5966f6db4678905e04c86aad5ad02ae5a2d118c9c76d`.
+Before any remote archival, verify that a retrievable copy still matches this
+digest. No tag or release should be rewritten from this document alone.

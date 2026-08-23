@@ -1,6 +1,11 @@
 # GoBarryGo product roadmap
 
-Status: direction approved; only the Downloader / Inbox module is shipped.
+Status: **superseded by ProtoPeek v0.5 Downloader; preserved as design history**.
+
+> This document records the pre-consolidation GoBarryGo direction. Its future
+> modules are not an active GoBarryGo delivery plan and must not be published
+> under GoBarryGo package identifiers. Evaluate any retained ideas inside
+> [ProtoPeek's consolidation contract](https://github.com/shreyam1008/ProtoPeek/blob/master/guides/gobarrygo-consolidation.md).
 
 GoBarryGo is evolving from a downloader into a native, low-overhead general-work
 suite. The product should still feel like one tool: one shell, one job model, one
