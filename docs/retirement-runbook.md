@@ -1,6 +1,6 @@
 # GoBarryGo public retirement runbook
 
-Status: **prepared locally; not published, redirected, or archived**.
+Status: **Compatibility page live; permanent redirect disabled; repository unarchived — verified 2026-08-24**.
 
 This status line is operational evidence, not permanent prose. After each
 activation or rollback, replace it with the exact resulting state and verification
