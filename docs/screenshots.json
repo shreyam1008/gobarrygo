@@ -1,6 +1,38 @@
 {
   "schemaVersion": 1,
-  "screenshots": [],
-  "status": "planned",
-  "nextAction": "Capture the current v0.0.9 desktop UI on each supported platform, without private download URLs or file paths, before submitting store metadata that requires screenshots."
+  "status": "captured",
+  "productVersion": "0.0.9",
+  "platform": "Linux",
+  "captureMethod": "Published v0.0.9 Linux release binary with an isolated local configuration and generated loopback test download.",
+  "screenshots": [
+    {
+      "filename": "screenshots/gobarrygo-v0.0.9-linux-ready.png",
+      "description": "GoBarryGo v0.0.9 ready state with aria2c healthy and no downloads tracked.",
+      "width": 1348,
+      "height": 926,
+      "captureDate": "2026-08-23"
+    },
+    {
+      "filename": "screenshots/gobarrygo-v0.0.9-linux-active-download.png",
+      "description": "GoBarryGo v0.0.9 transferring a generated 256 MB loopback test file through four active connections.",
+      "width": 1348,
+      "height": 926,
+      "captureDate": "2026-08-23"
+    },
+    {
+      "filename": "screenshots/gobarrygo-v0.0.9-linux-completed-download.png",
+      "description": "GoBarryGo v0.0.9 completed-download state with the finished generated test file selected for inspection.",
+      "width": 1348,
+      "height": 926,
+      "captureDate": "2026-08-23"
+    },
+    {
+      "filename": "screenshots/gobarrygo-v0.0.9-linux-preferences.png",
+      "description": "GoBarryGo v0.0.9 Preferences showing resource limits, allocation, resume, rename, and notification controls.",
+      "width": 1348,
+      "height": 926,
+      "captureDate": "2026-08-23"
+    }
+  ],
+  "nextAction": "After owner review, publish this verified pack with the next approved repository update and reuse it for package-store submissions that require screenshots."
 }
