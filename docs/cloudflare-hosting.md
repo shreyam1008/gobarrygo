@@ -10,5 +10,8 @@ The build verifies the static website before deployment. Keep `public/404.html`
 and the existing custom-domain canonical metadata. The app's GitHub releases
 remain unchanged.
 
-The GitHub Pages workflow remains available during migration for rollback:
-restore the host CNAME to `shreyam1008.github.io` with DNS-only mode if needed.
+GitHub Pages hosting and its deployment workflow were disabled on 9 September 2026.
+
+Rollback now requires re-enabling and successfully deploying GitHub Pages before
+restoring its DNS target; changing DNS alone is not sufficient. Retiring GitHub
+Pages also retires the old github.io-hosted URLs and redirects.
